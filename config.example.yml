@@ -1,0 +1,13 @@
+appname: Open Platform
+
+server:
+  host: 127.0.0.1
+  port: 8000
+  secretkey: 12345678
+
+wework:
+  cropid:
+  agentid:
+  agentsecret: 
+  secret: 
+  contactsecret:

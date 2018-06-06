@@ -1,0 +1,14 @@
+.idea/
+*tmp
+scripts/
+family-tree
+main
+vendor
+docs
+config.yml
+config.test.yml
+config.deploy.yml
+*.log
+*.html
+*.json
+coverage.txt
