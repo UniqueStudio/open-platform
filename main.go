@@ -38,6 +38,12 @@ func main() {
 
 	r.GET("/auth", handler.AuthHandler)
 
+	token := r.Group("/weixin")
+	token.Use(middleware.Admin())
+	{
+		token.GET("/template", handler.GetSMSTemplate)
+	}
+
 	showStatus()
 
 	// Run Server

@@ -22,6 +22,12 @@ type Config struct {
 		SecretKey string `default:"SecretKey"`
 	}
 
+	QcloudSMS struct {
+		AppID  string `default:""`
+		AppKey string `default:""`
+		Sign   string `default:""`
+	}
+
 	WeWork struct {
 		CropID        string `required:"true"` // CorpID
 		AgentID       int    `required:"true"` // Application ID
