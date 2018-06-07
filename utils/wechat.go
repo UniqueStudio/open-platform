@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"open-platform/wechat"
+	"strconv"
 	"time"
 )
 
@@ -35,6 +36,37 @@ type UserInfo struct {
 func init() {
 	Contact.Init(AppConfig.WeWork.CropID, AppConfig.WeWork.ContactSecret, 0)
 	Login.Init(AppConfig.WeWork.CropID, AppConfig.WeWork.AgentSecret, AppConfig.WeWork.AgentID)
+}
+
+// MakePCRedirctString to make up redirect auth string
+func MakePCRedirctString(redirectURL, state string) string {
+	u := url.Values{}
+	u.Set("appid", AppConfig.WeWork.CropID)
+	u.Set("agentid", strconv.Itoa(AppConfig.WeWork.AgentID))
+	u.Set("redirect_uri", redirectURL)
+	u.Set("state", state)
+
+	reuqestURL := "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" + u.Encode()
+	return reuqestURL
+}
+
+// MakeMobileRedirctString to make up redirect auth string
+func MakeMobileRedirctString(redirectURL, state, scope string) string {
+	u := url.Values{}
+	u.Set("response_type", "code")
+	u.Set("scope", scope)
+	u.Set("appid", AppConfig.WeWork.CropID)
+	// scope
+	// snsapi_base：静默授权，可获取成员的基本信息；
+	// snsapi_UserInfo：静默授权，可获取成员的敏感信息，但不包含手机、邮箱；
+	// snsapi_privateinfo：手动授权，可获取成员的敏感信息，包含手机、邮箱
+	u.Set("agentid", strconv.Itoa(AppConfig.WeWork.AgentID))
+	u.Set("redirect_uri", redirectURL)
+	u.Set("state", state)
+
+	reuqestURL := "https://open.weixin.qq.com/connect/oauth2/authorize?" + u.Encode() + "#wechat_redirect"
+
+	return reuqestURL
 }
 
 // VerifyCode is a func to verify work wexin code

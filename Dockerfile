@@ -7,6 +7,7 @@ RUN apk --no-cache add tzdata  ca-certificates && \
 
 WORKDIR /app
 ENV GIN_MODE release
+ADD static /app/static
 ADD config.deploy.yml /app/config.deploy.yml
 ADD main /app/main
 RUN chmod +x ./main
