@@ -18,6 +18,11 @@ func AuthHandler(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"code": http.StatusConflict, "message": err})
 	}
+	APPUserID, _, err := utils.LoadToken(state.Token)
+	if err != nil || APPUserID == "" {
+		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"code": http.StatusNonAuthoritativeInfo, "message": err})
+	}
+
 	fmt.Println("redirURL", state.URL)
 
 	code := c.Query("code")

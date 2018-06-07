@@ -29,12 +29,6 @@ Auth microservice in Unique Studio
 
 `https://open.work.weixin.qq.com/wwopen/sso/qrConnect`
 
-#### Request Header:
-
-Key|Value
----|---
-Token|`the token you got`
-
 #### Urlencode Parameters:
 
 Parameter|Required|Instruction
@@ -49,6 +43,7 @@ state| no| urlsafe base64 encoded `json data string`
 ``` json
 {
     "url":"your callback url"
+    "token":"the token you got"
 }
 ```
 

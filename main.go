@@ -36,11 +36,9 @@ func main() {
 		login.GET("/decode", handler.DecodeHandler)
 	}
 
-	token := r.Group("/")
-	token.Use(middleware.Admin())
-	{
-		token.GET("/auth", handler.AuthHandler)
-	}
+
+	token.GET("/auth", handler.AuthHandler)
+
 
 	showStatus()
 

@@ -33,7 +33,7 @@ func GenToken(UserID string, IsAdmin bool) string {
 }
 
 // LoadToken is a func to load token
-func LoadToken(Token string) (string, bool, error) {
+func LoadToken(Token string) (userID string, isAdmin bool, err error) {
 	if Token == "" {
 		return "", false, errors.New("Empyt Token")
 	}
