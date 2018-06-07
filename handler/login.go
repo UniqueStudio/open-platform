@@ -15,10 +15,10 @@ func LoginHandler(c *gin.Context) {
 	ua := user_agent.New(UserAgent)
 
 	if ua.Mobile() {
-		c.Redirect(http.StatusFound, utils.MakeMobileRedirctString("https://test.fredliang.cn/check", state, "snsapi_userinfo"))
+		c.Redirect(http.StatusFound, utils.MakeMobileRedirctString("https://"+utils.AppConfig.Server.Host+"/check", state, "snsapi_userinfo"))
 	} else {
 		c.HTML(http.StatusOK, "index_pc.tmpl", gin.H{
-			"redirURL": utils.MakePCRedirctString("https://test.fredliang.cn/check", state),
+			"redirURL": utils.MakePCRedirctString("https://"+utils.AppConfig.Server.Host+"/check", state),
 		})
 	}
 }

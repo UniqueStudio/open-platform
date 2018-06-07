@@ -36,9 +36,7 @@ func main() {
 		login.GET("/decode", handler.DecodeHandler)
 	}
 
-
-	token.GET("/auth", handler.AuthHandler)
-
+	r.GET("/auth", handler.AuthHandler)
 
 	showStatus()
 

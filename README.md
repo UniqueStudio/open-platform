@@ -42,7 +42,7 @@ state| no| urlsafe base64 encoded `json data string`
 
 ``` json
 {
-    "url":"your callback url"
+    "url":"your callback url",
     "token":"the token you got"
 }
 ```
@@ -56,6 +56,7 @@ state| no| urlsafe base64 encoded `json data string`
 Parameter|Instruction
 ---|---
 state| urlsafe base64 encoded `user info`
+timestamp| timestamp, example: `1423361979`
 
 #### User info:
 

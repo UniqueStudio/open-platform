@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"open-platform/utils"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +33,7 @@ func AuthHandler(c *gin.Context) {
 	u := url.Values{}
 	data, _ := json.Marshal(userInfo)
 	u.Set("state", utils.B64Encode(string(data)))
+	u.Set("timestamp", fmt.Sprintln(time.Now().Unix()))
 	c.Redirect(http.StatusFound, state.URL+"?"+u.Encode())
 }
 
