@@ -12,11 +12,10 @@ import (
 func GenAccessKeyHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	state := c.Query("state")
-	//code := c.Query("code")
 
 	UserID := session.Get("UserID")
 	if UserID == nil {
-		c.Redirect(http.StatusFound, "/login?state=check")
+		c.Redirect(http.StatusFound, "/login?state=api")
 		return
 	}
 	//IsLeader :=session.Get("IsLeader")

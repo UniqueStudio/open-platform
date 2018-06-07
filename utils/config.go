@@ -17,6 +17,7 @@ type Config struct {
 
 	Server struct {
 		Host      string `default:"127.0.0.1"`
+		Hostname  string `default:"open.hustunique.com"`
 		Port      string `default:"9012"`
 		SecretKey string `default:"SecretKey"`
 	}
