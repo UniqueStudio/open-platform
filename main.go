@@ -40,7 +40,8 @@ func main() {
 	token := r.Group("/weixin")
 	token.Use(middleware.Admin())
 	{
-		token.GET("/template", handler.GetSMSTemplate)
+		token.POST("/sms", handler.SendSMSHandler)
+		token.GET("/sms/template", handler.GetSMSTemplateHandler)
 		token.GET("/department", handler.GetDepartmentListHandler)
 		token.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
 	}
