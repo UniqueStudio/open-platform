@@ -1,35 +1,15 @@
 package main
 
 import (
-	_ "./docs"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"net/http"
 	"open-platform/handler"
 	"open-platform/middleware"
 	"open-platform/utils"
 )
 
-// @title Open Platform API
-// @version 0.1
-// @description This is a Unique Studio Open Platform API server.
-
-// @contact.name Fred Liang
-// @contact.url https://blog.fredliang.cn
-// @contact.email info@fredliang.cn
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Token
-
-// @license.name MPL-2.0
-
-// @host open.hustunique.com
-// @schemes https
 func main() {
 	r := gin.Default()
 
@@ -64,13 +44,6 @@ func main() {
 		token.GET("/department", handler.GetDepartmentListHandler)
 		token.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
 	}
-
-	r.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
-	r.GET("/department", handler.GetDepartmentListHandler)
-
-	// Use ginSwagger gen api doc
-	r.GET("/doc/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.GET("/", func(c *gin.Context) { c.Redirect(http.StatusPermanentRedirect, "/doc/index.html") })
 
 	showStatus()
 

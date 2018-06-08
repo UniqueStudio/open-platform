@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GenAccessKeyHandler is a func generate access key
+// AuthHandler is a func auth user euquest
 func AuthHandler(c *gin.Context) {
 	var state utils.State
 	err := json.Unmarshal([]byte(utils.B64Decode(c.Query("state"))), &state)

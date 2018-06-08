@@ -3,11 +3,10 @@ export PROJECT_PATH = $GOPATH/src/family-tree
 all: test
 
 env:
-	export GIN_MODE=test && \
-	swag init
+	export GIN_MODE=test
 
 run: env
 	go run ./main.go
 
 clean:
-	rm -ef *.json docs
+	rm -rf *.json docs
