@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthHandler is a func to resolve auth third party requests
+// GenAccessKeyHandler is a func generate access key
 func AuthHandler(c *gin.Context) {
 	var state utils.State
 	err := json.Unmarshal([]byte(utils.B64Decode(c.Query("state"))), &state)

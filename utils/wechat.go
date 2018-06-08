@@ -38,6 +38,25 @@ func init() {
 	Login.Init(AppConfig.WeWork.CropID, AppConfig.WeWork.AgentSecret, AppConfig.WeWork.AgentID)
 }
 
+// GetGroupUsers is a func to get group info
+func GetDepartmentUsers(groupsID []int) (data []wechat.User, Error error) {
+
+	fmt.Println("groupsID:", groupsID)
+	var userList []wechat.User
+
+	for _, departmentID := range groupsID {
+		fmt.Println("departmentID: ", departmentID)
+
+		tempList := Contact.GetDepartmentUsers(departmentID, 1)
+		fmt.Println("tempList: ", tempList)
+
+		userList = append(userList, tempList...)
+
+	}
+	fmt.Println("return userList")
+	return userList, nil
+}
+
 // MakePCRedirctString to make up redirect auth string
 func MakePCRedirctString(redirectURL, state string) string {
 	u := url.Values{}

@@ -31,6 +31,6 @@ func GetQCSMSTemplate() qcloudsms.TemplateGetResult {
 
 	var client = qcloudsms.NewClient(opt)
 
-	Template, _ :=client.GetTemplateByPage(0, 30)
+	Template, _ := client.GetTemplateByPage(0, 30)
 	return Template
 }

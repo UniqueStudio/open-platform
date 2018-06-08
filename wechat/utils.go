@@ -57,15 +57,15 @@ type users struct {
 }
 
 type User struct {
-	Userid       string `json:"userid"`
-	Name         string `json:"name"`
-	Department   []int  `json:"department"`
-	Mobile       string `json:"mobile"`
-	Email        string `json:"email"`
-	Status       int    `json:"status"`
-	Avatar       string `json:"avatar"`
-	Telephone    string `json:"telephone"`
-	English_name string `json:"english_name"`
+	Userid      string `json:"userid"`
+	Name        string `json:"name"`
+	Department  []int  `json:"department"`
+	Mobile      string `json:"mobile"`
+	Email       string `json:"email"`
+	Status      int    `json:"status"`
+	Avatar      string `json:"avatar"`
+	Telephone   string `json:"telephone"`
+	EnglishName string `json:"english_name"`
 }
 
 //agentId 表示应用id， 0  表示本应用
