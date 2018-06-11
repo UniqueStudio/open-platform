@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"open-platform/handler"
 	"open-platform/middleware"
 	"open-platform/utils"
@@ -16,7 +17,7 @@ func main() {
 	store := cookie.NewStore([]byte(utils.AppConfig.Server.SecretKey))
 	r.Use(sessions.Sessions("Status", store))
 
-	r.LoadHTMLGlob("static/html/*")
+	r.LoadHTMLGlob("static/*")
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -28,6 +29,13 @@ func main() {
 	r.GET("/check", handler.CheckAuthorityHandler)
 
 	r.GET("/api", handler.GenAccessKeyHandler)
+
+	app := r.Group("/app")
+	app.Use(middleware.Login())
+	{
+		app.GET("/:app", handler.RenderAppStaticFilesHandler)
+		app.StaticFS("/message/", http.Dir("./static/message/dist/"))
+	}
 
 	login := r.Group("/")
 	login.Use(middleware.Login())

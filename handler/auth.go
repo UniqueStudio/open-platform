@@ -3,16 +3,16 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
 	"open-platform/utils"
 	"strconv"
 	"time"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 )
 
-// AuthHandler is a func auth user euquest
+// AuthHandler is a func auth user request
 func AuthHandler(c *gin.Context) {
 	var state utils.State
 	err := json.Unmarshal([]byte(utils.B64Decode(c.Query("state"))), &state)
@@ -53,6 +53,7 @@ func TestHandler(c *gin.Context) {
 	reuqestURL := "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" + u.Encode()
 	c.Redirect(http.StatusFound, reuqestURL)
 }
+
 // AuthAPPHandler is a func auth user request
 func AuthAPPHandler(c *gin.Context) {
 	session := sessions.Default(c)
@@ -75,12 +76,12 @@ func AuthAPPHandler(c *gin.Context) {
 		session.Save()
 
 		c.JSON(http.StatusOK, gin.H{
-			"UserId": UserID,
-			"phone": info.Mobile,
+			"UserId":   UserID,
+			"phone":    info.Mobile,
 			"username": info.Name,
-			"state": state,
-			"appid": appID,
-			"err": err})
+			"state":    state,
+			"appid":    appID,
+			"err":      err})
 
 	default:
 		UserID, err := utils.VerifyCode(code)

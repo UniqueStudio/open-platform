@@ -18,7 +18,7 @@ func LoginHandler(c *gin.Context) {
 		app := c.Param("app")
 		c.Redirect(http.StatusFound, utils.MakeMobileRedirctString("https://"+utils.AppConfig.Server.Hostname+"auth/"+app, state, "snsapi_userinfo"))
 	} else {
-		c.HTML(http.StatusOK, "index_pc.tmpl", gin.H{
+		c.HTML(http.StatusOK, "html/index_pc.tmpl", gin.H{
 			"redirURL": utils.MakePCRedirctString("https://"+utils.AppConfig.Server.Hostname+"/check", state),
 		})
 	}
