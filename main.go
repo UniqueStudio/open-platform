@@ -24,6 +24,7 @@ func main() {
 	})
 
 	r.GET("/login", handler.LoginHandler)
+	r.GET("/login/:app", handler.LoginHandler)
 	r.GET("/check", handler.CheckAuthorityHandler)
 
 	r.GET("/api", handler.GenAccessKeyHandler)
@@ -36,6 +37,7 @@ func main() {
 	}
 
 	r.GET("/auth", handler.AuthHandler)
+	r.GET("/auth/:app", handler.AuthAPPHandler)
 
 	token := r.Group("/weixin")
 	token.Use(middleware.Admin())

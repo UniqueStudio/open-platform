@@ -8,7 +8,7 @@ import (
 	"open-platform/utils"
 	"strconv"
 	"time"
-
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,6 +52,54 @@ func TestHandler(c *gin.Context) {
 
 	reuqestURL := "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" + u.Encode()
 	c.Redirect(http.StatusFound, reuqestURL)
+}
+// AuthAPPHandler is a func auth user request
+func AuthAPPHandler(c *gin.Context) {
+	session := sessions.Default(c)
+
+	code := c.Query("code")
+	state := c.Query("state")
+	appID := c.Query("appid")
+	app := c.Param("app")
+
+	switch state {
+	case "":
+		fmt.Println(code)
+		UserID, err := utils.VerifyCode(code)
+
+		info, _ := utils.GetUserInfo(UserID)
+		fmt.Println("info", info)
+
+		session.Set("UserID", info.UserID)
+		session.Set("IsLeader", info.IsLeader == 1)
+		session.Save()
+
+		c.JSON(http.StatusOK, gin.H{
+			"UserId": UserID,
+			"phone": info.Mobile,
+			"username": info.Name,
+			"state": state,
+			"appid": appID,
+			"err": err})
+
+	default:
+		UserID, err := utils.VerifyCode(code)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"msg": err,
+			})
+		}
+		info, _ := utils.GetUserInfo(UserID)
+		fmt.Println("info", info)
+
+		fmt.Println("case test:")
+		session.Set("UserID", info.UserID)
+		session.Set("IsLeader", info.IsLeader == 1)
+		session.Save()
+
+		fmt.Println("state:", state)
+		c.Redirect(http.StatusFound, "app/"+app+"?code="+code+"&state="+state)
+	}
 }
 
 // DecodeHandler is a func to resolve auth third party requests
