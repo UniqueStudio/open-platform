@@ -30,7 +30,7 @@ func GenAccessKeyHandler(c *gin.Context) {
 			c.Redirect(http.StatusFound, "/login?state=api")
 		} else {
 			info, _ := utils.GetUserInfo(UserID.(string))
-			c.JSON(http.StatusOK, gin.H{"Token": utils.GenToken(info.UserID, info.IsLeader == 1), "status": "OK"})
+			c.JSON(http.StatusOK, gin.H{"accessKey": utils.GenAccessKey(info.UserID, info.IsLeader == 1), "status": "OK"})
 		}
 	}
 }

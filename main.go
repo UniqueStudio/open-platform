@@ -31,6 +31,7 @@ func main() {
 			"message": "pong",
 		})
 	})
+	r.GET("/test", handler.GenAuthTokenHandler)
 
 	r.GET("/login", handler.LoginHandler)
 	r.GET("/login/:app", handler.LoginHandler)
@@ -48,7 +49,6 @@ func main() {
 	login := r.Group("/")
 	login.Use(middleware.Login())
 	{
-		login.GET("/test", handler.TestHandler)
 		login.GET("/decode", handler.DecodeHandler)
 	}
 
@@ -58,10 +58,6 @@ func main() {
 	weixin := r.Group("/weixin")
 	weixin.Use(middleware.Auth())
 	{
-		weixin.POST("/sms", handler.SendSMSHandler)
-		weixin.GET("/sms/template", handler.GetSMSTemplateHandler)
-		weixin.POST("/sms/template", handler.AddSMSTemplateHandler)
-		weixin.GET("/sms/template/:id", handler.GetSMSTemplateStatusHandler)
 		weixin.GET("/department", handler.GetDepartmentListHandler)
 		weixin.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
 	}

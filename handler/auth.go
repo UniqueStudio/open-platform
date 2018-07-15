@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"net/url"
 	"open-platform/utils"
-	"strconv"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,14 @@ func AuthHandler(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"code": http.StatusConflict, "message": err})
 		return
 	}
-	APPUserID, _, err := utils.LoadToken(state.Token)
+
+	AccessKey := state.AccessKey
+	if AccessKey == "" {
+		AccessKey = state.Token
+	}
+
+	APPUserID, _, err := utils.LoadAccessKey(AccessKey)
+
 	if err != nil || APPUserID == "" {
 		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"code": http.StatusNonAuthoritativeInfo, "message": err})
 		return
@@ -39,21 +46,6 @@ func AuthHandler(c *gin.Context) {
 	u.Set("state", utils.B64Encode(string(data)))
 	u.Set("timestamp", fmt.Sprintln(time.Now().Unix()))
 	c.Redirect(http.StatusFound, state.URL+"?"+u.Encode())
-}
-
-// TestHandler is a func to resolve auth third party requests
-func TestHandler(c *gin.Context) {
-	u := url.Values{}
-	u.Set("appid", utils.AppConfig.WeWork.CropID)
-	u.Set("agentid", strconv.Itoa(utils.AppConfig.WeWork.AgentID))
-	u.Set("redirect_uri", "https://test.fredliang.cn/auth")
-	state := utils.B64Encode(`{"url":"https://test.fredliang.cn/decode"}`)
-
-	fmt.Println("state", state)
-	u.Set("state", state)
-
-	reuqestURL := "https://open.work.weixin.qq.com/wwopen/sso/qrConnect?" + u.Encode()
-	c.Redirect(http.StatusFound, reuqestURL)
 }
 
 // AuthAPPHandler is a func auth user request
@@ -113,4 +105,26 @@ func DecodeHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"state": decoded, "code": http.StatusOK})
+}
+
+// GenAuthTokenHandler is a func to gen Auth Token
+func GenAuthTokenHandler(c *gin.Context) {
+	// Create a new token object, specifying signing method and the claims
+	// you would like it to contain.
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"foo": "bar",
+		"expire": func() int64 {
+			now := time.Now()
+			duration, _ := time.ParseDuration("14d")
+			m1 := now.Add(duration)
+			return m1.Unix()
+		}(),
+	})
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString([]byte(utils.AppConfig.Server.SecretKey))
+
+	fmt.Println(tokenString, err)
+	c.String(http.StatusOK, tokenString)
 }
