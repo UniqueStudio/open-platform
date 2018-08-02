@@ -6,13 +6,21 @@ import (
 	"open-platform/middleware"
 	"open-platform/utils"
 
+	nice "github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Logger())
+
+	// CORS support
+	r.Use(middleware.CORSMiddleware())
+
+	// Recovery from internal server error
+	r.Use(nice.Recovery(handler.RecoveryHandler))
 
 	store := cookie.NewStore([]byte(utils.AppConfig.Server.SecretKey))
 	r.Use(sessions.Sessions("Status", store))
@@ -34,7 +42,7 @@ func main() {
 	app.Use(middleware.Login())
 	{
 		app.GET("/:app", handler.RenderAppStaticFilesHandler)
-		// app.StaticFS("/message/", http.Dir("./static/message/dist/"))
+		// TODO app.StaticFS("/message/", http.Dir("./static/message/dist/"))
 	}
 
 	login := r.Group("/")
