@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
-	"net/http"
 	"open-platform/handler"
 	"open-platform/middleware"
 	"open-platform/utils"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	store := cookie.NewStore([]byte(utils.AppConfig.Server.SecretKey))
 	r.Use(sessions.Sessions("Status", store))
 
-	r.LoadHTMLGlob("static/*")
+	r.LoadHTMLGlob("static/*/*.tmpl")
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -34,7 +34,7 @@ func main() {
 	app.Use(middleware.Login())
 	{
 		app.GET("/:app", handler.RenderAppStaticFilesHandler)
-		app.StaticFS("/message/", http.Dir("./static/message/dist/"))
+		// app.StaticFS("/message/", http.Dir("./static/message/dist/"))
 	}
 
 	login := r.Group("/")
@@ -48,7 +48,7 @@ func main() {
 	r.GET("/auth/:app", handler.AuthAPPHandler)
 
 	token := r.Group("/weixin")
-	token.Use(middleware.Admin())
+	token.Use(middleware.Auth())
 	{
 		token.POST("/sms", handler.SendSMSHandler)
 		token.GET("/sms/template", handler.GetSMSTemplateHandler)

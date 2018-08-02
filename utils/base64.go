@@ -6,12 +6,13 @@ import (
 )
 
 // B64Decode is a func to decode B64 string
-func B64Decode(raw string) string {
+func B64Decode(raw string) (string, error) {
 	decodeBytes, err := base64.URLEncoding.DecodeString(raw)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
+		return "", err
 	}
-	return string(decodeBytes)
+	return string(decodeBytes), nil
 }
 
 // B64Encode is a func to encode B64 string

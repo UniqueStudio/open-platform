@@ -3,19 +3,21 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
 	"open-platform/utils"
 	"strconv"
 	"time"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 // AuthHandler is a func auth user request
 func AuthHandler(c *gin.Context) {
 	var state utils.State
-	err := json.Unmarshal([]byte(utils.B64Decode(c.Query("state"))), &state)
+	decoded, err := utils.B64Decode(c.Query("state"))
+	err = json.Unmarshal([]byte(decoded), &state)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"code": http.StatusConflict, "message": err})
 		return
@@ -105,5 +107,10 @@ func AuthAPPHandler(c *gin.Context) {
 
 // DecodeHandler is a func to resolve auth third party requests
 func DecodeHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"state": utils.B64Decode(c.Query("state")), "code": http.StatusOK})
+	decoded, err := utils.B64Decode(c.Query("state"))
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"code": http.StatusConflict, "message": err})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"state": decoded, "code": http.StatusOK})
 }
