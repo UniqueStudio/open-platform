@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"open-platform/handler"
 	"open-platform/middleware"
 	"open-platform/utils"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -48,7 +49,7 @@ func main() {
 	r.GET("/auth/:app", handler.AuthAPPHandler)
 
 	token := r.Group("/weixin")
-	token.Use(middleware.Admin())
+	token.Use(middleware.Auth())
 	{
 		token.POST("/sms", handler.SendSMSHandler)
 		token.GET("/sms/template", handler.GetSMSTemplateHandler)
