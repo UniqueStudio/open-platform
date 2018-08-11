@@ -9,6 +9,6 @@ config.yml
 config.test.yml
 config.deploy.yml
 *.log
-*.html
 *.json
 coverage.txt
+debug

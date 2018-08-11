@@ -31,7 +31,7 @@ func SendMailHandler(c *gin.Context) {
 	subject := data.Subject
 
 	if name == "" || to == "" || content == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"msg": "Post data missing parameter"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Post data missing parameter", "code": http.StatusNotAcceptable})
 		return
 	}
 
@@ -42,7 +42,7 @@ func SendMailHandler(c *gin.Context) {
 	if err != nil {
 		fmt.Println("Send mail error!")
 		fmt.Println(err)
-		c.JSON(http.StatusConflict, gin.H{"msg": err.Error(), "code": http.StatusBadRequest})
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	} else {
 		fmt.Println("Send mail success!")
 		c.JSON(http.StatusOK, gin.H{"msg": "OK", "code": http.StatusOK})
@@ -69,6 +69,6 @@ func SendToMail(user, password, host, to, subject, body, mailtype string) error 
 
 func encodeRFC2047(String string) string {
 	// use mail's rfc2047 to encode any string
-	addr := mail.Address{String, ""}
+	addr := mail.Address{Name: String, Address: ""}
 	return strings.Trim(addr.String(), "<@>")
 }
