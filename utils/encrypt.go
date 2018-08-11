@@ -24,12 +24,14 @@ func removeBase64Padding(value string) string {
 	return strings.Replace(value, "=", "", -1)
 }
 
+// Pad is a func to pad bytes
 func Pad(src []byte) []byte {
 	padding := aes.BlockSize - len(src)%aes.BlockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
 	return append(src, padtext...)
 }
 
+// Unpad is a func to unpad bytes
 func Unpad(src []byte) ([]byte, error) {
 	length := len(src)
 	unpadding := int(src[length-1])
@@ -41,6 +43,7 @@ func Unpad(src []byte) ([]byte, error) {
 	return src[:(length - unpadding)], nil
 }
 
+// Encrypt is func to Eecrypt string
 func Encrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(AppConfig.Server.SecretKey))
 	if err != nil {
@@ -60,6 +63,7 @@ func Encrypt(text string) (string, error) {
 	return finalMsg, nil
 }
 
+// Decrypt is func to Decrypt string
 func Decrypt(text string) (string, error) {
 	block, err := aes.NewCipher([]byte(AppConfig.Server.SecretKey))
 	if err != nil {

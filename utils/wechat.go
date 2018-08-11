@@ -13,6 +13,8 @@ import (
 
 // Contact status work weixin api
 var Contact wechat.WorkWeixin
+
+// Login status work weixin api
 var Login wechat.WorkWeixin
 
 type codeResp struct {
@@ -38,7 +40,7 @@ func init() {
 	Login.Init(AppConfig.WeWork.CropID, AppConfig.WeWork.AgentSecret, AppConfig.WeWork.AgentID)
 }
 
-// GetGroupUsers is a func to get group info
+// GetDepartmentUsers is a func to get group info
 func GetDepartmentUsers(groupsID []int) (data []wechat.User, Error error) {
 
 	fmt.Println("groupsID:", groupsID)

@@ -34,6 +34,12 @@ type Config struct {
 		Secret        string `required:"true"` // Application Secret
 		ContactSecret string `required:"true"`
 	}
+
+	SMTP struct {
+		Sender   string `required:"true"`
+		Password string `required:"true"`
+		Host     string `required:"true"`
+	}
 }
 
 // LoadConfiguration is a function to load cfg from file

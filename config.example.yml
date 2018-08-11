@@ -17,3 +17,8 @@ wework:
   agentsecret: 
   secret: 
   contactsecret:
+
+smtp: 
+  sender: XXX@mail.XXX.com
+  password: 
+  host: smtp.mail.com

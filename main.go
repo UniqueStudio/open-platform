@@ -55,13 +55,25 @@ func main() {
 	r.GET("/auth", handler.AuthHandler)
 	r.GET("/auth/:app", handler.AuthAPPHandler)
 
-	token := r.Group("/weixin")
-	token.Use(middleware.Auth())
+	weixin := r.Group("/weixin")
+	weixin.Use(middleware.Auth())
 	{
-		token.POST("/sms", handler.SendSMSHandler)
-		token.GET("/sms/template", handler.GetSMSTemplateHandler)
-		token.GET("/department", handler.GetDepartmentListHandler)
-		token.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
+		weixin.POST("/sms", handler.SendSMSHandler)
+		weixin.GET("/sms/template", handler.GetSMSTemplateHandler)
+		weixin.POST("/sms/template", handler.AddSMSTemplateHandler)
+		weixin.GET("/sms/template/:id", handler.GetSMSTemplateStatusHandler)
+		weixin.GET("/department", handler.GetDepartmentListHandler)
+		weixin.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
+	}
+
+	message := r.Group("/message")
+	message.Use(middleware.Auth())
+	{
+		message.POST("/sms", handler.SendSMSHandler)
+		message.GET("/sms/template", handler.GetSMSTemplateHandler)
+		message.POST("/sms/template", handler.AddSMSTemplateHandler)
+		message.GET("/sms/template/:id", handler.GetSMSTemplateStatusHandler)
+		message.POST("/mail", handler.SendMailHandler)
 	}
 
 	showStatus()
