@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"open-platform/utils"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mssola/user_agent"
@@ -16,10 +17,14 @@ func LoginHandler(c *gin.Context) {
 
 	if ua.Mobile() {
 		app := c.Param("app")
-		c.Redirect(http.StatusFound, utils.MakeMobileRedirctString("https://"+utils.AppConfig.Server.Hostname+"auth/"+app, state, "snsapi_userinfo"))
+		c.Redirect(http.StatusFound, utils.MakeMobileRedirctString("https://"+utils.AppConfig.Server.Hostname+"/auth/"+app, state, "snsapi_userinfo"))
 	} else {
 		c.HTML(http.StatusOK, "index_pc.tmpl", gin.H{
-			"redirURL": utils.MakePCRedirctString("https://"+utils.AppConfig.Server.Hostname+"/check", state),
+			"redirURL":     utils.MakePCRedirctString("https://"+utils.AppConfig.Server.Hostname+"/check", state),
+			"appid":        utils.AppConfig.WeWork.CropID,
+			"agentid":      strconv.Itoa(utils.AppConfig.WeWork.AgentID),
+			"redirect_uri": "https%3a%2f%2fopen.hustunique.com%2fcheck",
+			"state":        state,
 		})
 	}
 }

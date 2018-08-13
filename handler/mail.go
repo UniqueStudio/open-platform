@@ -8,7 +8,7 @@ import (
 
 	"strings"
 
-	"github.com/emersion/go-sasl"
+	sasl "github.com/emersion/go-sasl"
 	"github.com/emersion/go-smtp"
 	"github.com/gin-gonic/gin"
 )

@@ -7,14 +7,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-// User is a token store data type
+// User is a AccessKey store data type
 type User struct {
 	UserID  string
 	IsAdmin bool
 }
 
-// GenToken is a function to gen token
-func GenToken(UserID string, IsAdmin bool) string {
+// GenAccessKey is a function to gen AccessKey
+func GenAccessKey(UserID string, IsAdmin bool) string {
 	user := User{
 		UserID:  UserID,
 		IsAdmin: IsAdmin,
@@ -25,20 +25,20 @@ func GenToken(UserID string, IsAdmin bool) string {
 		log.Fatalln(err)
 	}
 
-	Token, err := Encrypt(string(rs))
+	AccessKey, err := Encrypt(string(rs))
 	if err != nil {
 		log.Fatal(err)
 	}
-	return Token
+	return AccessKey
 }
 
-// LoadToken is a func to load token
-func LoadToken(Token string) (userID string, isAdmin bool, err error) {
-	if Token == "" {
-		return "", false, errors.New("Empyt Token")
+// LoadAccessKey is a func to load AccessKey
+func LoadAccessKey(AccessKey string) (userID string, isAdmin bool, err error) {
+	if AccessKey == "" {
+		return "", false, errors.New("Empyt AccessKey")
 	}
 	u := new(User)
-	data, err := Decrypt(Token)
+	data, err := Decrypt(AccessKey)
 	if err != nil {
 		return "", false, err
 	}

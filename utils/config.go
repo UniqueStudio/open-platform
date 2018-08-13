@@ -3,11 +3,10 @@ package utils
 import (
 	"fmt"
 	"log"
-	"os"
-	"strings"
 
+	"github.com/denverdino/aliyungo/acm"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/configor"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Config is a struct for backend config
@@ -44,23 +43,32 @@ type Config struct {
 
 // LoadConfiguration is a function to load cfg from file
 func LoadConfiguration() Config {
-	path, err := os.Getwd()
 
-	switch gin.Mode() {
-	case "release":
-		path = strings.Replace(path, "test", "", -1) + "/config.deploy.yml"
-	case "debug":
-		path = strings.Replace(strings.Replace(path, "test", "", -1), "/handler", "", -1) + "/config.yml"
+	const AccessKeyID = "LTAIZcjgmcBs7Y95"
+	const AccessKeySecret = "cS6XBX5uIeLDcfRtQD6pgj2gK9Dq0e"
+
+	client, err := acm.NewClient(func(c *acm.Client) {
+		c.AccessKey = AccessKeyID
+		c.SecretKey = AccessKeySecret
+		c.EndPoint = "acm.aliyun.com"
+		c.NameSpace = "0fb30cff-c36f-495a-a76e-9ab434994739"
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%s", gin.Mode())
+	ret, err := client.GetConfig("studio.open-platform."+gin.Mode(), "STUDIO")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	var config Config
-	configFile, err := os.Open(path)
-	defer configFile.Close()
+	err = yaml.Unmarshal([]byte(ret), &config)
 	if err != nil {
-		log.Printf("[loadAppConfig]: %s\n", err)
+		log.Fatalf("error: %v", err)
 	}
-
-	configor.Load(&config, path)
 
 	// Generate secret key
 	if count := len([]rune(config.Server.SecretKey)); count <= 32 {
