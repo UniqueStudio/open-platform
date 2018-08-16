@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"open-platform/handler"
 	"open-platform/middleware"
 	"open-platform/utils"
@@ -9,6 +10,7 @@ import (
 	nice "github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,10 +24,18 @@ func main() {
 	// Recovery from internal server error
 	r.Use(nice.Recovery(handler.RecoveryHandler))
 
+	// Static files
+	r.Use(static.Serve("/static", static.LocalFile("./static", true)))
+
 	store := cookie.NewStore([]byte(utils.AppConfig.Server.SecretKey))
 	r.Use(sessions.Sessions("Status", store))
 
 	r.LoadHTMLGlob("static/*/*.tmpl")
+
+	html := r.Group("/")
+	html.Use(middleware.Login())
+	html.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.tmpl", nil) })
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -70,6 +80,12 @@ func main() {
 		message.POST("/sms/template", handler.AddSMSTemplateHandler)
 		message.GET("/sms/template/:id", handler.GetSMSTemplateStatusHandler)
 		message.POST("/mail", handler.SendMailHandler)
+	}
+
+	open := r.Group("/open")
+	// open.Use(middleware.Auth())
+	{
+		open.POST("/sms", handler.PlatformSendSMS)
 	}
 
 	showStatus()

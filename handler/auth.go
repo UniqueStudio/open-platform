@@ -77,6 +77,24 @@ func AuthAPPHandler(c *gin.Context) {
 			"appid":    appID,
 			"err":      err})
 
+	case "api":
+		UserID, err := utils.VerifyCode(code)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"msg": err,
+			})
+		}
+		info, _ := utils.GetUserInfo(UserID)
+		fmt.Println("info", info)
+
+		fmt.Println("case test:")
+		session.Set("UserID", info.UserID)
+		session.Set("IsLeader", info.IsLeader == 1)
+		session.Save()
+
+		fmt.Println("state:", state)
+		c.Redirect(http.StatusFound, "/api?code="+code+"&state="+state)
+
 	default:
 		UserID, err := utils.VerifyCode(code)
 		if err != nil {
@@ -93,7 +111,7 @@ func AuthAPPHandler(c *gin.Context) {
 		session.Save()
 
 		fmt.Println("state:", state)
-		c.Redirect(http.StatusFound, "app/"+app+"?code="+code+"&state="+state)
+		c.Redirect(http.StatusFound, "/app/"+app+"?code="+code+"&state="+state)
 	}
 }
 

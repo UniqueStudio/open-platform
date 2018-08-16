@@ -15,19 +15,19 @@ func GenAccessKeyHandler(c *gin.Context) {
 
 	UserID := session.Get("UserID")
 	if UserID == nil {
-		c.Redirect(http.StatusFound, "/login?state=api")
+		c.Redirect(http.StatusTemporaryRedirect, "/login/api?state=api")
 		return
 	}
 	//IsLeader :=session.Get("IsLeader")
 
 	switch state {
 	case "":
-		c.Redirect(http.StatusFound, "/login?state=api")
+		c.Redirect(http.StatusTemporaryRedirect, "/login/api?state=api")
 
 	case "api":
 
 		if UserID == "" {
-			c.Redirect(http.StatusFound, "/login?state=api")
+			c.Redirect(http.StatusTemporaryRedirect, "/login/api?state=api")
 		} else {
 			info, _ := utils.GetUserInfo(UserID.(string))
 			c.JSON(http.StatusOK, gin.H{"accessKey": utils.GenAccessKey(info.UserID, info.IsLeader == 1), "status": "OK"})
