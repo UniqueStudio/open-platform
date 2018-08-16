@@ -29,8 +29,19 @@ func Auth() gin.HandlerFunc {
 				c.Set("IsLeader", IsLeader)
 				c.Next()
 			} else {
-				c.JSON(http.StatusUnauthorized, gin.H{"message": "Empty AccessKey Please authorize before requesting"})
-				c.Abort()
+				session := sessions.Default(c)
+				UserID := session.Get("UserID")
+				IsLeader := session.Get("IsLeader")
+
+				fmt.Println("UserID, IsLeader", UserID, IsLeader)
+				if UserID == nil {
+					c.JSON(http.StatusUnauthorized, gin.H{"message": "Empty AccessKey Please authorize before requesting"})
+					c.Abort()
+				}
+				c.Set("UserID", UserID)
+				c.Set("IsLeader", IsLeader)
+				c.Next()
+
 			}
 
 		default:

@@ -43,7 +43,7 @@ func CheckAuthorityHandler(c *gin.Context) {
 	session := sessions.Default(c)
 
 	switch state {
-	case "":
+	case "test":
 		fmt.Println(code)
 		UserID, err := utils.VerifyCode(code)
 

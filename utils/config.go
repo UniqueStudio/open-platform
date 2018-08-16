@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/denverdino/aliyungo/acm"
 	"github.com/gin-gonic/gin"
@@ -44,14 +45,16 @@ type Config struct {
 // LoadConfiguration is a function to load cfg from file
 func LoadConfiguration() Config {
 
-	const AccessKeyID = "LTAIZcjgmcBs7Y95"
-	const AccessKeySecret = "cS6XBX5uIeLDcfRtQD6pgj2gK9Dq0e"
+	AccessKeyID := os.Getenv("AliAccessKeyID")
+	AccessKeySecret := os.Getenv("AliAccessKeySecret")
+	AcmEndPoint := os.Getenv("AliAcmEndPoint")
+	AcmNameSpace := os.Getenv("AliAcmNameSpace")
 
 	client, err := acm.NewClient(func(c *acm.Client) {
 		c.AccessKey = AccessKeyID
 		c.SecretKey = AccessKeySecret
-		c.EndPoint = "acm.aliyun.com"
-		c.NameSpace = "0fb30cff-c36f-495a-a76e-9ab434994739"
+		c.EndPoint = AcmEndPoint
+		c.NameSpace = AcmNameSpace
 	})
 
 	if err != nil {
