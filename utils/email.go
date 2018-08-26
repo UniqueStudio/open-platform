@@ -8,10 +8,11 @@ import (
 )
 
 // RenderHTML is a func to gen html from html template
-func RenderHTML(name, content string) (html string) {
+func RenderHTML(name, content string) (html string, err error) {
 	t, err := template.ParseFiles("./static/html/email.html")
 	if err != nil {
 		fmt.Println(err)
+		return "", err
 	}
 	var body bytes.Buffer
 	t.Execute(&body, struct {
@@ -24,5 +25,30 @@ func RenderHTML(name, content string) (html string) {
 		Year:    time.Now().Year(),
 	})
 
-	return body.String()
+	//// Configure hermes by setting a theme and your product info
+	//h := hermes.Hermes{
+	//	// Optional Theme
+	//	// Theme: new(Default)
+	//	Product: hermes.Product{
+	//		// Appears in header & footer of e-mails
+	//		Name: "Unique Studio",
+	//		Link: "https://www.hustunique.com/",
+	//		// Optional product logo
+	//		Logo: "https://storage.fredliang.cn/web/studio/Logo.png",
+	//	},
+	//}
+	//
+	//email := hermes.Email{
+	//	Body: hermes.Body{
+	//		Name:         name,
+	//		FreeMarkdown: hermes.Markdown(content),
+	//	},
+	//}
+	//
+	//emailBody, err := h.GenerateHTML(email)
+	//if err != nil {
+	//	return "", err // Tip: Handle error with something else than a panic ;)
+	//}
+
+	return body.String(), nil
 }

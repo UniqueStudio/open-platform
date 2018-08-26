@@ -14,10 +14,11 @@ import (
 )
 
 type sender struct {
-	To      string `json:"to"`
-	Name    string `json:"name"`
-	Subject string `json:"subject"`
-	Content string `json:"content"`
+	To      string   `json:"to"`
+	ToList  []string `json:"toList"`
+	Name    string   `json:"name"`
+	Subject string   `json:"subject"`
+	Content string   `json:"content"`
 }
 
 // SendMailHandler is a func to handle send email template requests
@@ -26,18 +27,29 @@ func SendMailHandler(c *gin.Context) {
 	c.BindJSON(&data)
 
 	to := data.To
+	toList := data.ToList
 	name := data.Name
 	content := data.Content
 	subject := data.Subject
 
-	if name == "" || to == "" || content == "" {
+	if ((to == "") && (len(toList) == 0)) || content == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"msg": "Post data missing parameter"})
 		return
 	}
 
-	fmt.Println("send email")
+	renderContent, err := utils.RenderHTML(name, content)
 
-	err := SendToMail(utils.AppConfig.SMTP.Sender, utils.AppConfig.SMTP.Password, utils.AppConfig.SMTP.Host, to, subject, utils.RenderHTML(name, content), "html")
+	if err != nil {
+		fmt.Println("Send mail error!")
+		fmt.Println(err)
+		c.JSON(http.StatusConflict, gin.H{"msg": err.Error(), "code": http.StatusBadRequest})
+	}
+
+	err = SendToMail(
+		utils.AppConfig.SMTP.Sender,
+		utils.AppConfig.SMTP.Password,
+		utils.AppConfig.SMTP.Host,
+		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)))
 
 	if err != nil {
 		fmt.Println("Send mail error!")
@@ -50,7 +62,7 @@ func SendMailHandler(c *gin.Context) {
 }
 
 // SendToMail is a function to handle send email smtp requests
-func SendToMail(user, password, host, to, subject, body, mailtype string) error {
+func SendToMail(user, password, host, subject, body, mailtype string, to []string) error {
 	auth := sasl.NewPlainClient("", user, password)
 	fromName := "联创团队"
 	var contentType string
@@ -59,16 +71,14 @@ func SendToMail(user, password, host, to, subject, body, mailtype string) error 
 	} else {
 		contentType = "Content-Type: text/plain; charset=UTF-8"
 	}
-	msg := strings.NewReader("To: " + to + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
+	msg := strings.NewReader("To: " + strings.Join(to, ",") + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
 
-	sendTo := strings.Split(to, ";")
-
-	err := smtp.SendMail(host, auth, user, sendTo, msg)
+	err := smtp.SendMail(host, auth, user, to, msg)
 	return err
 }
 
 func encodeRFC2047(String string) string {
 	// use mail's rfc2047 to encode any string
-	addr := mail.Address{String, ""}
+	addr := mail.Address{Name: String, Address: ""}
 	return strings.Trim(addr.String(), "<@>")
 }

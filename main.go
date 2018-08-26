@@ -86,6 +86,7 @@ func main() {
 	// open.Use(middleware.Auth())
 	{
 		open.POST("/sms", handler.PlatformSendSMS)
+		open.GET("/permission", handler.GetPermissionHandler)
 	}
 
 	showStatus()

@@ -12,5 +12,12 @@ func RemoveDuplicate(s []string) []string {
 			}
 		}
 	}
-	return us
+
+	var r []string
+	for _, str := range us {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
 }

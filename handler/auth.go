@@ -13,6 +13,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type userPermisson struct {
+	Avatar      string   `json:"avatar"`
+	UserID      string   `json:"userID"`
+	Name        string   `json:"name"`
+	Permissions []string `json:"permissions"`
+}
+
+// GetPermissionHandler is a func to get user permission
+func GetPermissionHandler(c *gin.Context) {
+	session := sessions.Default(c)
+
+	tmp := session.Get("UserID")
+
+	if tmp == nil {
+		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"message": "Empty UserID", "code": http.StatusNonAuthoritativeInfo})
+		return
+	}
+
+	userID := tmp.(string)
+
+	permisson := userPermisson{UserID: userID}
+	userInfo, err := utils.GetUserInfo(userID)
+	permisson.Avatar = userInfo.Avatar
+	if userInfo.IsLeader == 1 {
+		permisson.Permissions = []string{"admin", "write", "read"}
+	} else {
+		permisson.Permissions = []string{"read"}
+	}
+
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"message": userInfo.ErrMsg, "code": http.StatusConflict})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "OK", "code": http.StatusOK, "data": permisson})
+}
+
 // AuthHandler is a func auth user request
 func AuthHandler(c *gin.Context) {
 	var state utils.State

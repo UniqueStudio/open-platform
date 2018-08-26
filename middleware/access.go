@@ -11,6 +11,9 @@ import (
 
 // Auth is a middleware to verify access
 func Auth() gin.HandlerFunc {
+	if gin.Mode() == "debug" {
+		return func(c *gin.Context) { c.Next() }
+	}
 	return func(c *gin.Context) {
 		AccessKey := c.GetHeader("AccessKey")
 		if c.GetHeader("AccessKey") == "" {
@@ -70,6 +73,9 @@ func Auth() gin.HandlerFunc {
 // You Have to append Header:
 // `AccessKey: oausudgaosugdoa``
 func Admin() gin.HandlerFunc {
+	if gin.Mode() == "debug" {
+		return func(c *gin.Context) { c.Next() }
+	}
 	return func(c *gin.Context) {
 		AccessKey := c.GetHeader("AccessKey")
 		if c.GetHeader("AccessKey") == "" {
@@ -102,6 +108,9 @@ func Admin() gin.HandlerFunc {
 
 //Login func is used to check if user is logged in
 func Login() gin.HandlerFunc {
+	if gin.Mode() == "debug" {
+		return func(c *gin.Context) { c.Next() }
+	}
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		UserID := session.Get("UserID")

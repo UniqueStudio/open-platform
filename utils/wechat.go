@@ -25,6 +25,7 @@ type codeResp struct {
 
 // UserInfo handle user info
 type UserInfo struct {
+	Avatar      string `json:"avatar"`
 	ErrCode     int    `json:"errcode"`
 	ErrMsg      string `json:"errmsg"`
 	Name        string `json:"name"`

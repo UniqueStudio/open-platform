@@ -37,7 +37,11 @@ func loadConfig() cors.Config {
 // CORSMiddleware is a func to handler CORS request
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		if gin.Mode() == "debug" {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
+		} else {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		}
 
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "AccessKey, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")

@@ -12,6 +12,7 @@ import (
 
 // GetDepartmentUsersHandler is a func to get sms template
 func GetDepartmentUsersHandler(c *gin.Context) {
+
 	departmentID, err := strconv.Atoi(c.Param("departmentID"))
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"message": err, "code": http.StatusConflict})

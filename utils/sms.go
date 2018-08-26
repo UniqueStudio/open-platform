@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	qcloudsms "github.com/qichengzx/qcloudsms_go"
+	qcloudsms "github.com/fredliang44/qcloudsms_go"
 )
 
 // SendQCSMS is a func to handle sms with qcloud
@@ -32,7 +32,6 @@ func SendQCSMSMulti(PhoneList []string, Template int, ParamList []string) (isOK 
 	var client = qcloudsms.NewClient(opt)
 	client.SetDebug(true)
 	TelList := []qcloudsms.SMSTel{}
-
 	for _, phone := range PhoneList {
 		TelList = append(TelList, qcloudsms.SMSTel{Nationcode: "86", Mobile: phone})
 	}

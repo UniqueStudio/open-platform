@@ -12,14 +12,16 @@ type platformSMSRequest struct {
 	ParamList    []string `json:"param_list"`
 	GroupChosen  []int    `json:"group_chosen"`
 	MemberChosen []string `json:"member_chosen"`
+	PhoneList    []string `json:"phone_list"`
 }
 
 // PlatformSendSMS is a func to send sms
 func PlatformSendSMS(c *gin.Context) {
 	var data platformSMSRequest
 	c.BindJSON(&data)
-	if data.Template == 0 || (len(data.GroupChosen)+len(data.MemberChosen) == 0) {
+	if data.Template == 0 || (len(data.GroupChosen)+len(data.MemberChosen)+len(data.PhoneList) == 0) {
 		c.JSON(http.StatusNotAcceptable, gin.H{"message": "Missing parameter", "code": http.StatusNotAcceptable})
+		return
 	}
 
 	phoneList := []string{}
@@ -43,6 +45,9 @@ func PlatformSendSMS(c *gin.Context) {
 			return
 		}
 	}
+
+	// get phone numbers from phone list
+	phoneList = append(phoneList, data.PhoneList...)
 
 	phoneList = utils.RemoveDuplicate(phoneList)
 
