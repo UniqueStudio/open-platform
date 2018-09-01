@@ -8,7 +8,7 @@ import (
 )
 
 // SendQCSMS is a func to handle sms with qcloud
-func SendQCSMS(Phone string, Template int, ParamList []string) (isOK bool, msg string, errID string) {
+func SendQCSMS(Phone string, Template int, ParamList []string) (isOK bool, message string, errID string) {
 	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
 
 	var client = qcloudsms.NewClient(opt)
@@ -26,7 +26,7 @@ func SendQCSMS(Phone string, Template int, ParamList []string) (isOK bool, msg s
 }
 
 // SendQCSMSMulti is a func to handle sms with qcloud
-func SendQCSMSMulti(PhoneList []string, Template int, ParamList []string) (isOK bool, msg string, errID string) {
+func SendQCSMSMulti(PhoneList []string, Template int, ParamList []string) (isOK bool, message string, errID string) {
 	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
 
 	var client = qcloudsms.NewClient(opt)

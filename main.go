@@ -45,6 +45,7 @@ func main() {
 
 	r.GET("/login", handler.LoginHandler)
 	r.GET("/login/:app", handler.LoginHandler)
+	r.GET("/logout", handler.LogoutHandler)
 	r.GET("/check", handler.CheckAuthorityHandler)
 
 	r.GET("/api", handler.GenAccessKeyHandler)

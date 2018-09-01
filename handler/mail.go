@@ -33,7 +33,7 @@ func SendMailHandler(c *gin.Context) {
 	subject := data.Subject
 
 	if ((to == "") && (len(toList) == 0)) || content == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"msg": "Post data missing parameter"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Post data missing parameter"})
 		return
 	}
 
@@ -42,7 +42,7 @@ func SendMailHandler(c *gin.Context) {
 	if err != nil {
 		fmt.Println("Send mail error!")
 		fmt.Println(err)
-		c.JSON(http.StatusConflict, gin.H{"msg": err.Error(), "code": http.StatusBadRequest})
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	}
 
 	err = SendToMail(
@@ -54,10 +54,10 @@ func SendMailHandler(c *gin.Context) {
 	if err != nil {
 		fmt.Println("Send mail error!")
 		fmt.Println(err)
-		c.JSON(http.StatusConflict, gin.H{"msg": err.Error(), "code": http.StatusBadRequest})
+		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	} else {
 		fmt.Println("Send mail success!")
-		c.JSON(http.StatusOK, gin.H{"msg": "OK", "code": http.StatusOK})
+		c.JSON(http.StatusOK, gin.H{"message": "OK", "code": http.StatusOK})
 	}
 }
 

@@ -117,7 +117,7 @@ func AuthAPPHandler(c *gin.Context) {
 		UserID, err := utils.VerifyCode(code)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": err,
+				"message": err,
 			})
 		}
 		info, _ := utils.GetUserInfo(UserID)
@@ -135,7 +135,7 @@ func AuthAPPHandler(c *gin.Context) {
 		UserID, err := utils.VerifyCode(code)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"msg": err,
+				"message": err,
 			})
 		}
 		info, _ := utils.GetUserInfo(UserID)

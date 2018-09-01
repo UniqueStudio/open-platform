@@ -5,6 +5,7 @@ import (
 	"open-platform/utils"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/mssola/user_agent"
 )
@@ -27,4 +28,16 @@ func LoginHandler(c *gin.Context) {
 			"state":        state,
 		})
 	}
+}
+
+// LogoutHandler is a func to handle user login request
+func LogoutHandler(c *gin.Context) {
+	state := c.Query("state")
+
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
+
+	c.Redirect(http.StatusTemporaryRedirect, "/"+state)
+
 }

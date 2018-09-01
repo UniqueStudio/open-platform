@@ -14,4 +14,4 @@ deploy:
 	docker push  registry.cn-hangzhou.aliyuncs.com/fredliang/open-platform
 
 clean:
-	rm -rf *.json docs
+	rm -rf *.json debug main gin-bin

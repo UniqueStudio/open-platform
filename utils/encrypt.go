@@ -50,17 +50,17 @@ func Encrypt(text string) (string, error) {
 		return "", err
 	}
 
-	msg := Pad([]byte(text))
-	ciphertext := make([]byte, aes.BlockSize+len(msg))
+	message := Pad([]byte(text))
+	ciphertext := make([]byte, aes.BlockSize+len(message))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", err
 	}
 
 	cfb := cipher.NewCFBEncrypter(block, iv)
-	cfb.XORKeyStream(ciphertext[aes.BlockSize:], []byte(msg))
-	finalMsg := removeBase64Padding(base64.URLEncoding.EncodeToString(ciphertext))
-	return finalMsg, nil
+	cfb.XORKeyStream(ciphertext[aes.BlockSize:], []byte(message))
+	finalmessage := removeBase64Padding(base64.URLEncoding.EncodeToString(ciphertext))
+	return finalmessage, nil
 }
 
 // Decrypt is func to Decrypt string
