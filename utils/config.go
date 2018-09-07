@@ -40,6 +40,14 @@ type Config struct {
 		Password string `required:"true"`
 		Host     string `required:"true"`
 	}
+
+	Mysql struct {
+		User     string `required:"true"`
+		Password string `required:"true"`
+		Host     string `required:"true"`
+		Port     string `required:"true",default:"3306"`
+		Database string `required:"true"`
+	}
 }
 
 // LoadConfiguration is a function to load cfg from file

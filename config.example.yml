@@ -22,3 +22,10 @@ smtp:
   sender: XXX@mail.XXX.com
   password: 
   host: smtp.mail.com
+
+mysql:
+  user:
+  password:
+  host:
+  port:
+  database:

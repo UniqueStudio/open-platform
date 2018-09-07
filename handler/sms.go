@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"open-platform/db"
 	"open-platform/utils"
 	"strconv"
 
@@ -57,6 +58,60 @@ func SendSMSHandler(c *gin.Context) {
 
 	c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": message, "error_id": errID})
 
+}
+
+// ReplyCallbackHandler is a handler to receive sms reply callback request
+func ReplyCallbackHandler(c *gin.Context) {
+	var replyData db.Reply
+	c.BindJSON(&replyData)
+	_, err := db.ORM.Insert(&replyData)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK"})
+
+}
+
+// StatusCallbackHandler is a handler to receive sms Status callback request
+func StatusCallbackHandler(c *gin.Context) {
+	var statusData []db.Status
+	c.BindJSON(&statusData)
+
+	_, err := db.ORM.Insert(&statusData)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK"})
+}
+
+// GetReplyHandler is a handler to receive sms Status callback request
+func GetReplyHandler(c *gin.Context) {
+	replyList := make([]db.Reply, 0)
+
+	err := db.ORM.Find(&replyList)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": replyList})
+}
+
+// GetStatusHandler is a handler to receive sms Status callback request
+func GetStatusHandler(c *gin.Context) {
+	statusList := make([]db.Status, 0)
+
+	err := db.ORM.Find(&statusList)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": statusList})
 }
 
 type templateInfo struct {
