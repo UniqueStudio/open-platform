@@ -1,7 +1,7 @@
 package db
 
 type Reply struct {
-	Id         int64  `xorm:"pk autoincr"`
+	Id         int64  `json:"id" xorm:"pk autoincr"`
 	Extend     string `json:"extend"`
 	Mobile     string `json:"mobile"`
 	NationCode string `json:"nationcode"`
@@ -11,7 +11,7 @@ type Reply struct {
 }
 
 type Status struct {
-	Id              int64  `xorm:"pk autoincr"`
+	Id              int64  `json:"id" xorm:"pk autoincr"`
 	UserReceiveTime string `json:"user_receive_time"`
 	NationCode      string `json:"nationcode"`
 	Mobile          string `json:"mobile"`
