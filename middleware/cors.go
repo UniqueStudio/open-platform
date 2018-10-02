@@ -38,7 +38,7 @@ func loadConfig() cors.Config {
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if gin.Mode() == "debug" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "https://127.0.0.1:8080")
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:8080")
 		} else {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		}

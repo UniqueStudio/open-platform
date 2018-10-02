@@ -5,6 +5,7 @@ family-tree
 main
 vendor
 docs
+debug
 config.yml
 config.test.yml
 config.deploy.yml
