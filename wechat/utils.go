@@ -176,6 +176,7 @@ func (w *WorkWeixin) GetTagList() []Tag {
 	}
 	return f.TagList
 }
+
 func (w *WorkWeixin) GetTagUser(tagid int) []User {
 
 	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/tag/get?access_token=%s&tagid=%d",

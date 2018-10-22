@@ -71,6 +71,7 @@ func main() {
 	{
 		weixin.GET("/department", handler.GetDepartmentListHandler)
 		weixin.GET("/department/:departmentID", handler.GetDepartmentUsersHandler)
+		weixin.PATCH("/user/:userID", handler.UpdateUserInfoHandler)
 	}
 
 	message := r.Group("/message")

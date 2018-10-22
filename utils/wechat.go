@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/jochasinga/requests"
 	"net/http"
 	"net/url"
 	"open-platform/wechat"
@@ -25,15 +26,89 @@ type codeResp struct {
 
 // UserInfo handle user info
 type UserInfo struct {
-	Avatar      string `json:"avatar"`
-	ErrCode     int    `json:"errcode"`
-	ErrMsg      string `json:"errmsg"`
-	Name        string `json:"name"`
-	UserID      string `json:"userid"`
-	Departments []int  `json:"department"`
-	Mobile      string `json:"mobile"`
-	Email       string `json:"email"`
-	IsLeader    int    `json:"isleader"`
+	ErrCode    int    `json:"errcode,omitempty"`
+	ErrMsg     string `json:"errmsg,omitempty"`
+	UserID     string `json:"userid"`
+	Name       string `json:"name,omitempty"`
+	Department []int  `json:"department,omitempty"`
+	Order      []int  `json:"order,omitempty"`
+	Position   string `json:"position,omitempty`
+	Mobile     string `json:"mobile,omitempty"`
+	Gender     string `json:"gender,omitempty"`
+	Email      string `json:"email,omitempty"`
+	IsLeader   int    `json:"isleader,omitempty"`
+	Avatar     string `json:"avatar,omitempty"`
+	Telephone  string `json:"telephone,omitempty"`
+	Enable     int    `json:"enable,omitempty"`
+	Alias      string `json:"alias,omitempty"`
+	Extattr    struct {
+		Attrs []struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		} `json:"attrs"`
+	} `json:"extattr,omitempty"`
+	Status           int    `json:"status,omitempty"`
+	QrCode           string `json:"qr_code,omitempty"`
+	ExternalPosition string `json:"external_position,omitempty"`
+	ExternalProfile  struct {
+		ExternalAttr []struct {
+			Type int    `json:"type"`
+			Name string `json:"name"`
+			Text struct {
+				Value string `json:"value"`
+			} `json:"text,omitempty"`
+			Web struct {
+				URL   string `json:"url"`
+				Title string `json:"title"`
+			} `json:"web,omitempty"`
+			Miniprogram struct {
+				Appid    string `json:"appid"`
+				Pagepath string `json:"pagepath"`
+				Title    string `json:"title"`
+			} `json:"miniprogram,omitempty"`
+		} `json:"external_attr,omitempty"`
+	} `json:"external_profile,omitempty"`
+}
+
+type UpdateInfoStruct struct {
+	Userid        string `json:"userid"`
+	Name          string `json:"name,omitempty"`
+	Department    []int  `json:"department,omitempty"`
+	Order         []int  `json:"order,omitempty"`
+	Position      string `json:"position,omitempty"`
+	Mobile        string `json:"mobile,omitempty"`
+	Gender        string `json:"gender,omitempty"`
+	Email         string `json:"email,omitempty"`
+	Isleader      int    `json:"isleader,omitempty"`
+	Enable        int    `json:"enable,omitempty"`
+	AvatarMediaid string `json:"avatar_mediaid,omitempty"`
+	Telephone     string `json:"telephone,omitempty"`
+	Alias         string `json:"alias,omitempty"`
+	Extattr       struct {
+		Attrs []struct {
+			Name  string `json:"name"`
+			Value string `json:"value"`
+		} `json:"attrs,omitempty"`
+	} `json:"extattr,omitempty"`
+	ExternalPosition string `json:"external_position,omitempty"`
+	ExternalProfile  struct {
+		ExternalAttr []struct {
+			Type int    `json:"type"`
+			Name string `json:"name"`
+			Text struct {
+				Value string `json:"value"`
+			} `json:"text,omitempty"`
+			Web struct {
+				URL   string `json:"url"`
+				Title string `json:"title"`
+			} `json:"web,omitempty"`
+			Miniprogram struct {
+				Appid    string `json:"appid"`
+				Pagepath string `json:"pagepath"`
+				Title    string `json:"title"`
+			} `json:"miniprogram,omitempty"`
+		} `json:"external_attr,omitempty"`
+	} `json:"external_profile,omitempty"`
 }
 
 func init() {
@@ -125,6 +200,30 @@ func GetUserInfo(userid string) (data *UserInfo, Error error) {
 		return info, nil
 	}
 	return info, errors.New(info.ErrMsg)
+}
+
+// UpdateUserInfo is a func to update user info
+func UpdateUserInfo(data UpdateInfoStruct) (Error error) {
+	u := url.Values{}
+	u.Set("access_token", Contact.GetAccessToken())
+	reuqestURL := "https://qyapi.weixin.qq.com/cgi-bin/user/update?" + u.Encode()
+
+	res, err := requests.PostJSON(reuqestURL, data)
+	fmt.Println(reuqestURL, res.String())
+
+	if err != nil {
+		return err
+	}
+
+	var resp codeResp
+	json.Unmarshal(res.JSON(), &resp)
+
+	if resp.ErrCode != 0 {
+		return errors.New(string(res.JSON()))
+	}
+	fmt.Println(resp.ErrCode)
+
+	return nil
 }
 
 var myClient = &http.Client{Timeout: 10 * time.Second}

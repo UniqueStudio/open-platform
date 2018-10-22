@@ -79,3 +79,25 @@ func CheckAuthorityHandler(c *gin.Context) {
 
 	}
 }
+
+// UpdateUserInfoHandler is a func to update user info in unique studio
+func UpdateUserInfoHandler(c *gin.Context) {
+	userID := c.Param("userID")
+	var info utils.UpdateInfoStruct
+
+	if err := c.ShouldBindJSON(&info); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
+		return
+	}
+
+	info.Userid = userID
+
+	err := utils.UpdateUserInfo(info)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "OK", "code": http.StatusOK})
+}

@@ -9,6 +9,7 @@ run: env
 	go run ./main.go
 
 deploy:
+	swag init
 	GOOS=linux GOARCH=amd64  go build -tags=jsoniter ./main.go
 	docker build -t registry.cn-hangzhou.aliyuncs.com/fredliang/open-platform  .
 	docker push registry.cn-hangzhou.aliyuncs.com/fredliang/open-platform
