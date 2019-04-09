@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/denverdino/aliyungo/acm"
+	"github.com/fredliang44/aliyungo/acm"
 	"github.com/gin-gonic/gin"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -45,7 +45,7 @@ type Config struct {
 		User     string `required:"true"`
 		Password string `required:"true"`
 		Host     string `required:"true"`
-		Port     string `required:"true",default:"3306"`
+		Port     string `required:"true" default:"3306"`
 		Database string `required:"true"`
 	}
 }
@@ -74,6 +74,8 @@ func LoadConfiguration() Config {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(ret)
 
 	var config Config
 	err = yaml.Unmarshal([]byte(ret), &config)

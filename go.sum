@@ -10,6 +10,8 @@ github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6 h1:BZGp1dbKF
 github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6/go.mod h1:xN/JuLBIz4bjkxNmByTiV1IbhfnYb6oo99phBn4Eqhc=
 github.com/denverdino/aliyungo v0.0.0-20180815121905-69560d9530f5 h1:YjnQWGUNtqeKqndapy9V1BzlfMwc/dBJf2MU9dmuXSQ=
 github.com/denverdino/aliyungo v0.0.0-20180815121905-69560d9530f5/go.mod h1:dV8lFg6daOBZbT6/BDGIz6Y3WFGn8juu6G+CQ6LHtl0=
+github.com/denverdino/aliyungo v0.0.0-20190220033614-36e2ae938978 h1:oyfbRmu7YnytN4bXhvJPY1HPgUL52j5AxtgGDU0bMVs=
+github.com/denverdino/aliyungo v0.0.0-20190220033614-36e2ae938978/go.mod h1:dV8lFg6daOBZbT6/BDGIz6Y3WFGn8juu6G+CQ6LHtl0=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/ekyoung/gin-nice-recovery v0.0.0-20160510022553-1654dca486db h1:oZ4U9IqO8NS+61OmGTBi8vopzqTRxwQeogyBHdrhjbc=
@@ -18,6 +20,8 @@ github.com/emersion/go-sasl v0.0.0-20161116183048-7e096a0a6197 h1:rDJPbyliyym8ZL
 github.com/emersion/go-sasl v0.0.0-20161116183048-7e096a0a6197/go.mod h1:G/dpzLu16WtQpBfQ/z3LYiYJn3ZhKSGWn83fyoyQe/k=
 github.com/emersion/go-smtp v0.0.0-20180712174835-db5eec195e67 h1:dX+AA0E1snhBHTIteO1uF8e8NSl1B6NLH4/Vl+RiIfo=
 github.com/emersion/go-smtp v0.0.0-20180712174835-db5eec195e67/go.mod h1:pWTu8vaUWw7VstSr/kt92tqtcF46ynjh5BUvQRRjHvI=
+github.com/fredliang44/aliyungo v0.0.0-20190222135757-7f0d31a284d5 h1:GrPv494p42x0xiTU/HQCJ26tWq56NfCPJFNli/PD370=
+github.com/fredliang44/aliyungo v0.0.0-20190222135757-7f0d31a284d5/go.mod h1:CtG9S/+SxoarHgEjHlmkZ5gP4Js2h4rPKtxIGTL8wL8=
 github.com/fredliang44/qcloudsms_go v0.0.0-20180817122333-c66e22d02f3d h1:TKr9rLZ0jrJKDETd7M3YjS9zb34Rb6NSVVTKruYiAP8=
 github.com/fredliang44/qcloudsms_go v0.0.0-20180817122333-c66e22d02f3d/go.mod h1:5qoNE8vMljuVwE+6QOElyFD1tRq68UJTq++oOAnbJDQ=
 github.com/gin-contrib/cors v0.0.0-20180514151808-6f0a820f94be h1:2dYuM6B1e0D4RetEP5sHh4OZkBAvNiLPaqB0h+y6BJU=
