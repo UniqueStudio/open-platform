@@ -40,7 +40,7 @@ func SendMailHandler(c *gin.Context) {
 	renderContent, err := utils.RenderHTML(name, content)
 
 	if err != nil {
-		fmt.Println("Send mail error!")
+		fmt.Println("Send mail error1!")
 		fmt.Println(err)
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	}
@@ -52,7 +52,7 @@ func SendMailHandler(c *gin.Context) {
 		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)))
 
 	if err != nil {
-		fmt.Println("Send mail error!")
+		fmt.Println("Send mail error2!")
 		fmt.Println(err)
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	} else {
@@ -71,6 +71,21 @@ func SendToMail(user, password, host, subject, body, mailtype string, to []strin
 	} else {
 		contentType = "Content-Type: text/plain; charset=UTF-8"
 	}
+
+	/*var err error
+
+	for _, valueTo := range to{
+		var singleTo []string
+		singleTo = append(singleTo, valueTo)
+
+		msg := strings.NewReader("To: " + valueTo + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
+
+		err = smtp.SendMail(host, auth, user, singleTo, msg)
+
+		if err != nil{
+			return err
+		}
+	}*/
 	msg := strings.NewReader("To: " + strings.Join(to, ",") + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
 
 	err := smtp.SendMail(host, auth, user, to, msg)

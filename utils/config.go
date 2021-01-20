@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -15,44 +16,43 @@ type Config struct {
 	APPName string `default:"Gin App"`
 
 	Server struct {
-		Host      string `default:"127.0.0.1"`
-		Hostname  string `default:"open.hustunique.com"`
-		Port      string `default:"9012"`
-		SecretKey string `default:"SecretKey"`
+		Host      string `default:"127.0.0.1";yaml:"host"`
+		Hostname  string `default:"localhost";yaml:"hostname"`
+		Port      string `default:"9012";yaml:"port"`
+		SecretKey string `default:"SecretKey";yaml:"secretkey"`
 	}
 
 	QcloudSMS struct {
-		AppID  string `default:""`
-		AppKey string `default:""`
-		Sign   string `default:""`
+		AppID  string `default:"";yaml:"appid"`
+		AppKey string `default:"";yaml:"appkey"`
+		Sign   string `default:"";yaml:"sign"`
 	}
 
 	WeWork struct {
-		CropID        string `required:"true"` // CorpID
-		AgentID       int    `required:"true"` // Application ID
-		AgentSecret   string `required:"true"`
-		Secret        string `required:"true"` // Application Secret
-		ContactSecret string `required:"true"`
+		CropID        string `required:"true";yaml:"cropid"` // CorpID
+		AgentID       int    `required:"true";yaml:"agentid"` // Application ID
+		AgentSecret   string `required:"true";yaml:"agentsecret"`
+		Secret        string `required:"true";yaml:"secret"` // Application Secret
+		ContactSecret string `required:"true";yaml:"contactsecret"`
 	}
 
 	SMTP struct {
-		Sender   string `required:"true"`
-		Password string `required:"true"`
-		Host     string `required:"true"`
+		Sender   string `required:"true";yaml:"sender"`
+		Password string `required:"true";yaml:"password"`
+		Host     string `required:"true";yaml:"host"`
 	}
 
 	Mysql struct {
-		User     string `required:"true"`
-		Password string `required:"true"`
-		Host     string `required:"true"`
-		Port     string `required:"true" default:"3306"`
-		Database string `required:"true"`
+		User     string `required:"true";yaml:"user"`
+		Password string `required:"true";yaml:"password"`
+		Host     string `required:"true";yaml:"host"`
+		Port     string `required:"true" default:"3306";yaml:"port"`
+		Database string `required:"true";yaml:"database"`
 	}
 }
 
 // LoadConfiguration is a function to load cfg from file
 func LoadConfiguration() Config {
-
 	AccessKeyID := os.Getenv("AliAccessKeyID")
 	AccessKeySecret := os.Getenv("AliAccessKeySecret")
 	AcmEndPoint := os.Getenv("AliAcmEndPoint")
@@ -97,4 +97,17 @@ func LoadConfiguration() Config {
 }
 
 // AppConfig is a struct loaded from config file
-var AppConfig = LoadConfiguration()
+//var AppConfig = LoadConfiguration()
+func Loadlocalfile() Config {
+	var config Config
+	a,err:=ioutil.ReadFile("config.yml")
+	if err!=nil{
+		log.Println(err)
+	}
+	err = yaml.Unmarshal(a,&config)
+	if err!=nil{
+		log.Println(err)
+	}
+	return config
+}
+var AppConfig = Loadlocalfile()

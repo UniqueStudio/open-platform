@@ -12,6 +12,7 @@ import (
 var ORM *xorm.Engine
 
 func init() {
+	fmt.Println(utils.AppConfig.Mysql.Host)
 	var err error
 	ORM, err = xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
 		utils.AppConfig.Mysql.User, utils.AppConfig.Mysql.Password, utils.AppConfig.Mysql.Host, utils.AppConfig.Mysql.Port, utils.AppConfig.Mysql.Database))
