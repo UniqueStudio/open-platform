@@ -31,8 +31,6 @@ func CreateShortUrlHandler(c *gin.Context) {
 	var data shorter
 	c.BindJSON(&data)
 
-	fmt.Println(data)
-
 	urlList := data.UrlList
 	number := data.Number
 	shortUrlPrefix := utils.AppConfig.ShortUrl  //"http://uniqs.cc"
