@@ -81,8 +81,8 @@ func SendToMail(user, password, host, subject, body, mailtype string, to, ccto, 
 	bcctoAdress := strings.Join(bccto,",")
 	msg := strings.NewReader("To: " + toAdress + "\r\nReply-To: " + "contact@hustunique.com" +  "\r\nCc: " + cctoAdress + "\r\nBcc: " + bcctoAdress +  "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
 
-	to = MergeSlice(to, ccto)
-	to = MergeSlice(to, bccto)
+	to = append(to, ccto...)
+	to = append(to, bccto...)
 	err := smtp.SendMail(host, auth, user, to, msg)
 	return err
 }
@@ -91,11 +91,4 @@ func encodeRFC2047(String string) string {
 	// use mail's rfc2047 to encode any string
 	addr := mail.Address{Name: String, Address: ""}
 	return strings.Trim(addr.String(), "<@>")
-}
-
-func MergeSlice(s1 []string, s2 []string) []string {
-	slice := make([]string, len(s1)+len(s2))
-	copy(slice, s1)
-	copy(slice[len(s1):], s2)
-	return slice
 }
