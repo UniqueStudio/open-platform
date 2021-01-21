@@ -14,6 +14,8 @@ import (
 )
 
 type sender struct {
+	BccTo	[]string `json:"bccto"`
+	CcTo	[]string `json:"ccto"`
 	To      string   `json:"to"`
 	ToList  []string `json:"toList"`
 	Name    string   `json:"name"`
@@ -26,6 +28,8 @@ func SendMailHandler(c *gin.Context) {
 	var data sender
 	c.BindJSON(&data)
 
+	bccto :=data.BccTo
+	ccto :=data.CcTo
 	to := data.To
 	toList := data.ToList
 	name := data.Name
@@ -49,7 +53,7 @@ func SendMailHandler(c *gin.Context) {
 		utils.AppConfig.SMTP.Sender,
 		utils.AppConfig.SMTP.Password,
 		utils.AppConfig.SMTP.Host,
-		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)))
+		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)),ccto,bccto)
 
 	if err != nil {
 		fmt.Println("Send mail error2!")
@@ -62,7 +66,7 @@ func SendMailHandler(c *gin.Context) {
 }
 
 // SendToMail is a function to handle send email smtp requests
-func SendToMail(user, password, host, subject, body, mailtype string, to []string) error {
+func SendToMail(user, password, host, subject, body, mailtype string, to,ccto,bccto []string) error {
 	auth := sasl.NewPlainClient("", user, password)
 	fromName := "联创团队"
 	var contentType string
@@ -72,22 +76,13 @@ func SendToMail(user, password, host, subject, body, mailtype string, to []strin
 		contentType = "Content-Type: text/plain; charset=UTF-8"
 	}
 
-	/*var err error
+	toAdress := strings.Join(to, ",")
+	cctoAdress := strings.Join(ccto, ",")
+	bcctoAdress := strings.Join(bccto,",")
+	msg := strings.NewReader("To: " + toAdress + "\r\nReply-To: " + "contact@hustunique.com" +  "\r\nCc: " + cctoAdress + "\r\nBcc: " + bcctoAdress +  "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
 
-	for _, valueTo := range to{
-		var singleTo []string
-		singleTo = append(singleTo, valueTo)
-
-		msg := strings.NewReader("To: " + valueTo + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
-
-		err = smtp.SendMail(host, auth, user, singleTo, msg)
-
-		if err != nil{
-			return err
-		}
-	}*/
-	msg := strings.NewReader("To: " + strings.Join(to, ",") + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
-
+	to = MergeSlice(to, ccto)
+	to = MergeSlice(to, bccto)
 	err := smtp.SendMail(host, auth, user, to, msg)
 	return err
 }
@@ -96,4 +91,11 @@ func encodeRFC2047(String string) string {
 	// use mail's rfc2047 to encode any string
 	addr := mail.Address{Name: String, Address: ""}
 	return strings.Trim(addr.String(), "<@>")
+}
+
+func MergeSlice(s1 []string, s2 []string) []string {
+	slice := make([]string, len(s1)+len(s2))
+	copy(slice, s1)
+	copy(slice[len(s1):], s2)
+	return slice
 }
