@@ -28,8 +28,8 @@ func SendMailHandler(c *gin.Context) {
 	var data sender
 	c.BindJSON(&data)
 
-	bccto :=data.BccTo
-	ccto :=data.CcTo
+	bccto := data.BccTo
+	ccto := data.CcTo
 	to := data.To
 	toList := data.ToList
 	name := data.Name
@@ -53,7 +53,7 @@ func SendMailHandler(c *gin.Context) {
 		utils.AppConfig.SMTP.Sender,
 		utils.AppConfig.SMTP.Password,
 		utils.AppConfig.SMTP.Host,
-		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)),ccto,bccto)
+		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)), ccto, bccto)
 
 	if err != nil {
 		fmt.Println("Send mail error2!")
@@ -66,7 +66,7 @@ func SendMailHandler(c *gin.Context) {
 }
 
 // SendToMail is a function to handle send email smtp requests
-func SendToMail(user, password, host, subject, body, mailtype string, to,ccto,bccto []string) error {
+func SendToMail(user, password, host, subject, body, mailtype string, to, ccto, bccto []string) error {
 	auth := sasl.NewPlainClient("", user, password)
 	fromName := "联创团队"
 	var contentType string
