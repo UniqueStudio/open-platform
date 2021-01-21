@@ -9,10 +9,10 @@ import (
 
 func MapShorturlHandler(c *gin.Context)  {
 	var result db.Short_Url
-	shorturl :=  c.Param("Shorturl")
-	has,err:=db.ORM.Where("Shorturl=?",shorturl).Get(&result)
+	shorturl := c.Param("Shorturl")
+	has,err := db.ORM.Where("Shorturl=?",shorturl).Get(&result)
 
-	if err !=nil {
+	if err != nil {
 		c.JSON(http.StatusBadGateway,gin.H{"message":"something wrong with db"})
 		return
 	}

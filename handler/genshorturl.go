@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"net/http"
 	"open-platform/db"
 	"open-platform/utils"
@@ -15,15 +14,13 @@ import (
 type resultForCreation struct {
 	url  string
 	code string
-	err error
+	err  error
 }
 
 
 type shorter struct {
-
 	UrlList  []string `json:"urllist"`
 	Number   int      `json:"number"`
-	ShortUrl []string `json:"shorturl"`
 	HashCode []string `json:"hashcode"`
 }
 
@@ -45,10 +42,8 @@ func CreateShortUrlHandler(c *gin.Context) {
 		go func(lUrl string) {
 			shortUrl, err := GenShortUrl(lUrl)
 			if err != nil {
-				//logs.Error("gen shortUrl failed, error: " + err.Error())
 				resultCode <- resultForCreation{lUrl, "",err}
-			} else {
-				//logs.Info("[create]: " + lUrl + " => " + shortUrl)
+			}else{
 				resultCode <- resultForCreation{lUrl, shortUrl,nil}
 			}
 
