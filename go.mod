@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	cloud.google.com/go v0.27.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6 // indirect
 	github.com/denverdino/aliyungo v0.0.0-20190220033614-36e2ae938978 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -18,7 +19,6 @@ require (
 	github.com/gin-contrib/static v0.0.0-20180301030858-73da7037e716 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-errors/errors v1.0.1 // indirect
-	github.com/go-openapi/spec v0.17.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.0
 	github.com/go-xorm/xorm v0.7.0
 	github.com/golang/protobuf v1.2.0 // indirect
@@ -36,7 +36,9 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/mssola/user_agent v0.4.1
 	github.com/pkg/errors v0.8.0
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/swaggo/swag v1.3.2 // indirect
 	github.com/ugorji/go v1.1.1 // indirect
 	github.com/ziutek/mymysql v1.5.4 // indirect

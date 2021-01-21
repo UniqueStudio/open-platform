@@ -14,7 +14,7 @@ import (
 // Config is a struct for backend config
 type Config struct {
 	APPName string `default:"Gin App"`
-
+	ShortUrl string `default:"uniqs.cc"`
 	Server struct {
 		Host      string `default:"127.0.0.1";yaml:"host"`
 		Hostname  string `default:"localhost";yaml:"hostname"`
