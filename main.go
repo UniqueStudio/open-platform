@@ -95,6 +95,9 @@ func main() {
 		open.GET("/permission", handler.GetPermissionHandler)
 	}
 
+	r.GET("/v/:Shorturl",handler.MapShorturlHandler)
+	r.GET("/genUrl",middleware.Auth(),handler.CreateShortUrlHandler)
+
 	showStatus()
 
 	// Run Server
