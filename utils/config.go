@@ -96,5 +96,18 @@ func LoadConfiguration() Config {
 }
 
 // AppConfig is a struct loaded from config file
-
 var AppConfig = LoadConfiguration()
+
+//func Loadlocalfile() Config {
+//	var config Config
+//	a,err:=ioutil.ReadFile("config.yml")
+//	if err!=nil{
+//		log.Println(err)
+//	}
+//	err = yaml.Unmarshal(a,&config)
+//	if err!=nil{
+//		log.Println(err)
+//	}
+//	return config
+//}
+//var AppConfig = Loadlocalfile()
