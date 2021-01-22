@@ -7,23 +7,17 @@ import (
 	"net/http"
 	"open-platform/db"
 	"open-platform/utils"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
-type resultForCreation struct {
-	url  string
-	code string
-	err  error
-}
-
-
 type shorter struct {
 	UrlList  []string `json:"urllist"`
 	Number   int      `json:"number"`
-	HashCode []string `json:"hashcode"`
 }
 
+//CreateShortUrlHandler is a func to handle shorturl generation
 func CreateShortUrlHandler(c *gin.Context) {
 	var data shorter
 	c.BindJSON(&data)
@@ -37,39 +31,33 @@ func CreateShortUrlHandler(c *gin.Context) {
 		return
 	}
 
-	resultCode := make(chan resultForCreation)
+	var results = make(map[string]interface{})
+	var lock sync.Mutex
+	var wg sync.WaitGroup
+	wg.Add(len(urlList))
+
 	for _, v := range urlList {
 		go func(lUrl string) {
+			lock.Lock()
+			defer lock.Unlock()
+
 			shortUrl, err := GenShortUrl(lUrl)
 			if err != nil {
-				resultCode <- resultForCreation{lUrl, "",err}
+				results[lUrl] = err.Error()
 			}else{
-				resultCode <- resultForCreation{lUrl, shortUrl,nil}
+				results[lUrl] = shortUrlPrefix + shortUrl
 			}
 
+			wg.Done()
 		}(v)
 	}
 
-	var results = make(map[string]interface{})
-	var count = 1
-	for {
-		res := <-resultCode
+	wg.Wait()
+	c.JSON(http.StatusOK, gin.H{"urls": results})
 
-		if res.err !=nil{
-			results[res.url] = res.err.Error()
-		}else{
-			results[res.url] = shortUrlPrefix + res.code
-		}
-
-		if count == len(urlList) {
-			close(resultCode)
-			c.JSON(http.StatusOK, gin.H{"urls": results})
-			return
-		}
-		count++
-	}
 }
 
+//GenShortUrl is a func to generate shorturl and insert the item to database
 func GenShortUrl(Url string) (ShortUrl string, err error) {
 	urlmd5 := MD5(Url)
 	result := new(db.Short_Url)
@@ -103,6 +91,7 @@ func GenShortUrl(Url string) (ShortUrl string, err error) {
 		if shorturl == "" {
 			return "", errors.New("gen code failed")
 		}
+
 		newUrl.Shorturl = shorturl
 		_, err = db.ORM.Id(id).Update(newUrl)
 

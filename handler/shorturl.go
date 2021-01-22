@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-func MapShorturlHandler(c *gin.Context)  {
+//MapShortUrlHandler is a function to redirecte a request with shorturl to the origin url
+func MapShortUrlHandler(c *gin.Context)  {
 	var result db.Short_Url
 	shorturl := c.Param("Shorturl")
 	has,err := db.ORM.Where("Shorturl=?",shorturl).Get(&result)
@@ -24,8 +25,9 @@ func MapShorturlHandler(c *gin.Context)  {
 	if !strings.Contains(result.Url,"http://") && !strings.Contains(result.Url,"https://"){
 		result.Url = "http://"+result.Url
 	}
+
 	c.Header("Location",result.Url)
 	c.JSON(http.StatusFound,gin.H{"url":result.Url})
-	//c.Redirect(http.StatusMovedPermanently,result.Url)
+
 	return
 }
