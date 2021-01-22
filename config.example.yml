@@ -1,5 +1,7 @@
 appname: Open Platform
 
+shorturl: http://uniqs.cc
+
 server:
   host: 127.0.0.1
   hostname: open.hustunique.com

@@ -34,9 +34,10 @@ func CreateShortUrlHandler(c *gin.Context) {
 	var results = make(map[string]interface{})
 	var lock sync.Mutex
 	var wg sync.WaitGroup
-	wg.Add(len(urlList))
 
 	for _, v := range urlList {
+		wg.Add(1)
+
 		go func(lUrl string) {
 			lock.Lock()
 			defer lock.Unlock()
