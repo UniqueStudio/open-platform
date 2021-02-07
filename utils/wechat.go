@@ -32,7 +32,7 @@ type UserInfo struct {
 	Name       string `json:"name,omitempty"`
 	Department []int  `json:"department,omitempty"`
 	Order      []int  `json:"order,omitempty"`
-	Position   string `json:"position,omitempty`
+	Position   string `json:"position,omitempty"`
 	Mobile     string `json:"mobile,omitempty"`
 	Gender     string `json:"gender,omitempty"`
 	Email      string `json:"email,omitempty"`
@@ -70,6 +70,7 @@ type UserInfo struct {
 	} `json:"external_profile,omitempty"`
 }
 
+// UpdateInfoStruct is a type for udate service 
 type UpdateInfoStruct struct {
 	Userid        string `json:"userid"`
 	Name          string `json:"name,omitempty"`

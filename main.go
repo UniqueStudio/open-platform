@@ -3,19 +3,19 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"open-platform/handler"
-	"open-platform/middleware"
-	"open-platform/utils"
-
 	nice "github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"open-platform/handler"
+	"open-platform/middleware"
+	"open-platform/utils"
 )
 
 func main() {
+
 	r := gin.New()
 	r.Use(gin.Logger())
 
@@ -95,6 +95,9 @@ func main() {
 		open.POST("/sms", handler.PlatformSendSMS)
 		open.GET("/permission", handler.GetPermissionHandler)
 	}
+
+	r.GET("/v/:Shorturl", handler.MapShortUrlHandler)
+	r.GET("/genUrl", middleware.Auth(), handler.CreateShortUrlHandler)
 
 	showStatus()
 
