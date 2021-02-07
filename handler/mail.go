@@ -14,6 +14,8 @@ import (
 )
 
 type sender struct {
+	BccTo	[]string `json:"bccto"`
+	CcTo	[]string `json:"ccto"`
 	To      string   `json:"to"`
 	ToList  []string `json:"toList"`
 	Name    string   `json:"name"`
@@ -26,6 +28,8 @@ func SendMailHandler(c *gin.Context) {
 	var data sender
 	c.BindJSON(&data)
 
+	bccto := data.BccTo
+	ccto := data.CcTo
 	to := data.To
 	toList := data.ToList
 	name := data.Name
@@ -40,7 +44,7 @@ func SendMailHandler(c *gin.Context) {
 	renderContent, err := utils.RenderHTML(name, content)
 
 	if err != nil {
-		fmt.Println("Send mail error!")
+		fmt.Println("Send mail error1!")
 		fmt.Println(err)
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	}
@@ -49,10 +53,10 @@ func SendMailHandler(c *gin.Context) {
 		utils.AppConfig.SMTP.Sender,
 		utils.AppConfig.SMTP.Password,
 		utils.AppConfig.SMTP.Host,
-		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)))
+		subject, renderContent, "html", utils.RemoveDuplicate(append(toList, to)), ccto, bccto)
 
 	if err != nil {
-		fmt.Println("Send mail error!")
+		fmt.Println("Send mail error2!")
 		fmt.Println(err)
 		c.JSON(http.StatusConflict, gin.H{"message": err.Error(), "code": http.StatusBadRequest})
 	} else {
@@ -62,7 +66,7 @@ func SendMailHandler(c *gin.Context) {
 }
 
 // SendToMail is a function to handle send email smtp requests
-func SendToMail(user, password, host, subject, body, mailtype string, to []string) error {
+func SendToMail(user, password, host, subject, body, mailtype string, to, ccto, bccto []string) error {
 	auth := sasl.NewPlainClient("", user, password)
 	fromName := "联创团队"
 	var contentType string
@@ -71,8 +75,14 @@ func SendToMail(user, password, host, subject, body, mailtype string, to []strin
 	} else {
 		contentType = "Content-Type: text/plain; charset=UTF-8"
 	}
-	msg := strings.NewReader("To: " + strings.Join(to, ",") + "\r\nReply-To: " + "contact@hustunique.com" + "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
 
+	toAdress := strings.Join(to, ",")
+	cctoAdress := strings.Join(ccto, ",")
+	bcctoAdress := strings.Join(bccto,",")
+	msg := strings.NewReader("To: " + toAdress + "\r\nReply-To: " + "contact@hustunique.com" +  "\r\nCc: " + cctoAdress + "\r\nBcc: " + bcctoAdress +  "\r\nFrom: " + fromName + " <" + user + ">\r\nSubject: " + encodeRFC2047(subject) + "\r\n" + contentType + "\r\n\r\n" + body)
+
+	to = append(to, ccto...)
+	to = append(to, bccto...)
 	err := smtp.SendMail(host, auth, user, to, msg)
 	return err
 }

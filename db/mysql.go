@@ -20,7 +20,7 @@ func init() {
 		log.Println(err)
 		panic(err)
 	}
-	err = ORM.Sync(new(Reply), new(Status))
+	err = ORM.Sync(new(Reply), new(Status), new(Short_Url))
 	if err != nil {
 		log.Println(err)
 		panic(err)

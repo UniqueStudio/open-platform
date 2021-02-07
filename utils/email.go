@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// RenderHTML is a func to gen html from html template
+// RenderHTML is a func to generate html from html template
 func RenderHTML(name, content string) (html string, err error) {
 	t, err := template.ParseFiles("./static/html/email.html")
 	if err != nil {
