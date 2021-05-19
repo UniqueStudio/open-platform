@@ -1,15 +1,27 @@
 appname: Open Platform
 
+shorturl: http://uniqs.cc
+
 server:
   host: 127.0.0.1
   hostname: open.hustunique.com
   port: 8000
   secretkey: 12345678
 
-qcloudsms:
-  appid: 
-  appkey:
-  sign:
+tencentcloudsdksms:
+  sdkappid:
+  secretid:
+  secretkey:
+  templates:
+    -
+      id: 123456
+      paramnum: 6
+      content: "{1}你好，你通过了{2}{3}组{4}审核，请{5}以完成下一流程：{6}"
+
+  signs:
+    -
+      id: 123456
+      content: "Sign"
 
 wework:
   cropid:
