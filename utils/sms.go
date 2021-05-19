@@ -2,91 +2,45 @@ package utils
 
 import (
 	"fmt"
-	"time"
-
-	qcloudsms "github.com/fredliang44/qcloudsms_go"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20190711"
 )
 
-// SendQCSMS is a func to handle sms with qcloud
-func SendQCSMS(Phone string, Template int, ParamList []string) (isOK bool, message string, errID string) {
-	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
 
-	var client = qcloudsms.NewClient(opt)
-	client.SetDebug(true)
+func SendSingleSms(phoneNumber string, templateParamSet []string, templateID string) (*sms.SendSmsResponse, error) {
+	credential := common.NewCredential(
+		AppConfig.TencentCloudSDKSMS.SecretID,
+		AppConfig.TencentCloudSDKSMS.SecretKey,
+	)
 
-	var t = qcloudsms.SMSSingleReq{
-		Params: ParamList,
-		Tel:    qcloudsms.SMSTel{Nationcode: "86", Mobile: Phone},
-		Sign:   AppConfig.QcloudSMS.Sign,
-		TplID:  Template,
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "sms.tencentcloudapi.com"
+	client, _ := sms.NewClient(credential, "", cpf)
+
+	request := sms.NewSendSmsRequest()
+	request.PhoneNumberSet = common.StringPtrs([]string{phoneNumber})
+	request.TemplateParamSet = common.StringPtrs(templateParamSet)
+	request.TemplateID = common.StringPtr(templateID)
+	request.SmsSdkAppid = common.StringPtr(AppConfig.TencentCloudSDKSMS.SDKAppID)
+	//request.Sign = common.StringPtr(sign)
+
+	response, err := client.SendSms(request)
+
+	if _, ok := err.(*errors.TencentCloudSDKError); ok {
+		fmt.Printf("An API error has returned: %s", err)
+		return nil, err
 	}
-
-	isOK, err := client.SendSMSSingle(t)
-	return isOK, fmt.Sprintln(err), fmt.Sprintln(err)
-}
-
-// SendQCSMSMulti is a func to handle sms with qcloud
-func SendQCSMSMulti(PhoneList []string, Template int, ParamList []string) (isOK bool, message string, errID string) {
-	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
-
-	var client = qcloudsms.NewClient(opt)
-	client.SetDebug(true)
-	TelList := []qcloudsms.SMSTel{}
-	for _, phone := range PhoneList {
-		TelList = append(TelList, qcloudsms.SMSTel{Nationcode: "86", Mobile: phone})
+	if err != nil {
+		return nil, err
 	}
-
-	var t = qcloudsms.SMSMultiReq{
-		Params: ParamList,
-		Tel:    TelList,
-		Sign:   AppConfig.QcloudSMS.Sign,
-		TplID:  uint(Template),
-	}
-
-	isOK, err := client.SendSMSMulti(t)
-	return isOK, fmt.Sprintln(err), fmt.Sprintln(err)
+	//fmt.Printf("send success, res: %s\n", response.ToJsonString())
+	return response, nil
 }
 
-// GetQCSMSTemplate is a func to Get Qcloud SMS Template
-func GetQCSMSTemplate() qcloudsms.TemplateGetResult {
-	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
 
-	opt.Debug = true
-
-	var client = qcloudsms.NewClient(opt)
-
-	Template, _ := client.GetTemplateByPage(0, 30)
-	return Template
+func GetTemplates() []*SMSTemplate {
+	return AppConfig.TencentCloudSDKSMS.Templates
 }
 
-// AddQCSMSTemplate is a func to add timepla
-func AddQCSMSTemplate(title, text, remark string) (qcloudsms.TemplateResult, error) {
-	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
-
-	opt.Debug = true
-
-	var client = qcloudsms.NewClient(opt)
-
-	TemplateResult, err := client.NewTemplate(qcloudsms.TemplateNew{
-		Title:  title,
-		Text:   text,
-		Type:   0,
-		Remark: remark,
-		Time:   time.Now().Unix(),
-	})
-
-	return TemplateResult, err
-}
-
-// GetQCSMSTemplateStatus is a func to get Get QC SMS Template Status
-func GetQCSMSTemplateStatus(id []uint) (qcloudsms.TemplateGetResult, error) {
-	opt := qcloudsms.NewOptions(AppConfig.QcloudSMS.AppID, AppConfig.QcloudSMS.AppKey, AppConfig.QcloudSMS.Sign)
-
-	opt.Debug = true
-
-	var client = qcloudsms.NewClient(opt)
-
-	templateGetResult, err := client.GetTemplateByID(id)
-
-	return templateGetResult, err
-}
