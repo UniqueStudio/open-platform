@@ -121,7 +121,7 @@ func LoadConfiguration() Config {
 
 func Loadlocalfile() Config {
 	var config Config
-	a,err:=ioutil.ReadFile("config.yml")
+	a,err:=ioutil.ReadFile("/config/config.yml")
 	if err!=nil{
 		log.Println(err)
 	}
