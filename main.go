@@ -90,6 +90,12 @@ func main() {
 		open.GET("/permission", handler.GetPermissionHandler)
 	}
 
+	mail := r.Group("/mail")
+	mail.Use(middleware.Auth())
+	{
+		mail.POST("/send_mail", handler.SendMailHandler)
+	}
+
 	r.GET("/v/:Shorturl", handler.MapShortUrlHandler)
 	r.GET("/genUrl", middleware.Auth(), handler.CreateShortUrlHandler)
 
