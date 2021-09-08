@@ -2,12 +2,12 @@ package utils
 
 import (
 	"fmt"
+
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20190711"
+	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111"
 )
-
 
 func SendSingleSms(phoneNumber string, templateParamSet []string, templateID string) (*sms.SendSmsResponse, error) {
 	credential := common.NewCredential(
@@ -20,11 +20,11 @@ func SendSingleSms(phoneNumber string, templateParamSet []string, templateID str
 	client, _ := sms.NewClient(credential, "", cpf)
 
 	request := sms.NewSendSmsRequest()
-	request.PhoneNumberSet = common.StringPtrs([]string{phoneNumber})
+	request.SmsSdkAppId = common.StringPtr(AppConfig.TencentCloudSDKSMS.SDKAppID)
+	request.SignName = common.StringPtr(AppConfig.TencentCloudSDKSMS.Sign.Content)
 	request.TemplateParamSet = common.StringPtrs(templateParamSet)
-	request.TemplateID = common.StringPtr(templateID)
-	request.SmsSdkAppid = common.StringPtr(AppConfig.TencentCloudSDKSMS.SDKAppID)
-	//request.Sign = common.StringPtr(sign)
+	request.TemplateId = common.StringPtr(templateID)
+	request.PhoneNumberSet = common.StringPtrs([]string{phoneNumber})
 
 	response, err := client.SendSms(request)
 
@@ -39,8 +39,6 @@ func SendSingleSms(phoneNumber string, templateParamSet []string, templateID str
 	return response, nil
 }
 
-
 func GetTemplates() []*SMSTemplate {
 	return AppConfig.TencentCloudSDKSMS.Templates
 }
-

@@ -12,16 +12,16 @@ import (
 )
 
 type SMSTemplate struct {
-	ID			string `default:""`
-	ParamNum 	int		`yaml:"paramnum"`
-	Content 	string `default:""`
+	ID       string `default:""`
+	ParamNum int    `yaml:"paramnum"`
+	Content  string `default:""`
 }
 
 // Config is a struct for backend config
 type Config struct {
-	APPName string `default:"Gin App"`
+	APPName  string `default:"Gin App"`
 	ShortUrl string `default:"uniqs.cc"`
-	Server struct {
+	Server   struct {
 		Host      string `default:"127.0.0.1" yaml:"host"`
 		Hostname  string `default:"localhost" yaml:"hostname"`
 		Port      string `default:"9012" yaml:"port"`
@@ -36,18 +36,18 @@ type Config struct {
 
 	//
 	TencentCloudSDKSMS struct {
-		SDKAppID  	string `default:""`
-		SecretID 	string `default:""`
-		SecretKey	string `default:""`
-		Templates   []*SMSTemplate
-		Signs 		[]*struct{
-			ID 			string `default:""`
-			Content 	string `default:""`
-		}
+		SDKAppID  string `default:""`
+		SecretID  string `default:""`
+		SecretKey string `default:""`
+		Templates []*SMSTemplate
+		Sign      struct {
+			ID      string `default:""`
+			Content string `default:""`
+		} `yaml:"sign"`
 	}
 
 	WeWork struct {
-		CropID        string `required:"true" yaml:"cropid"` // CorpID
+		CropID        string `required:"true" yaml:"cropid"`  // CorpID
 		AgentID       int    `required:"true" yaml:"agentid"` // Application ID
 		AgentSecret   string `required:"true" yaml:"agentsecret"`
 		Secret        string `required:"true" yaml:"secret"` // Application Secret
@@ -115,18 +115,17 @@ func LoadConfiguration() Config {
 	return config
 }
 
-
 // AppConfig is a struct loaded from config file
 //var AppConfig = LoadConfiguration()
 
 func LoadConfigurationLocally() Config {
 	var config Config
-	a,err:=ioutil.ReadFile("config.yml")
-	if err!=nil{
+	a, err := ioutil.ReadFile("config.yml")
+	if err != nil {
 		log.Println(err)
 	}
-	err = yaml.Unmarshal(a,&config)
-	if err!=nil{
+	err = yaml.Unmarshal(a, &config)
+	if err != nil {
 		log.Println(err)
 	}
 
@@ -140,5 +139,5 @@ func LoadConfigurationLocally() Config {
 	}
 	return config
 }
-var AppConfig = LoadConfigurationLocally()
 
+var AppConfig = LoadConfigurationLocally()
