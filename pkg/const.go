@@ -11,3 +11,7 @@ const (
 	ROLE_GENERAY_SECRETARY int = 3
 	ROLE_DevOps            int = 4
 )
+
+const (
+	SESSION_KEY = "accessUser"
+)

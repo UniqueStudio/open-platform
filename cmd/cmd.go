@@ -57,6 +57,11 @@ func initConfig() {
 		zapx.Error("setup database failed", zap.Error(err))
 		os.Exit(1)
 	}
+
+	if err := utils.SetupSessionStore(); err != nil {
+		zapx.Error("setup session failed", zap.Error(err))
+		os.Exit(1)
+	}
 }
 
 func run() error {

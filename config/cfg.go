@@ -37,6 +37,11 @@ type DatabaseConfig struct {
 		UserDSN string `mapstructure:"user_dsn"`
 		OpenDSN string `mapstructure:"open_dsn"`
 	} `mapstructure:"postgres"`
+	Redis struct {
+		Addr     string `mapstructure:"addr"`
+		Password string `mapstructure:"password"`
+		DB       int    `mapstructure:"db"`
+	}
 }
 
 type TencentConfig struct {
