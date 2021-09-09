@@ -21,6 +21,8 @@ func InitRouter(r *gin.Engine) {
 }
 
 func initSMSRouter(r *gin.RouterGroup) {
+	// need auth
+	r.Use(middleware.Auth())
 	r.POST("/send_single", handles.SendSingleSMSHandler)
 	r.POST("/send_group", handles.SendGroupSMSHandler)
 	r.GET("/templates", handles.GetSMSTemplateHandler)

@@ -28,17 +28,17 @@ func GenAccessKey(UserID string, IsAdmin bool) string {
 }
 
 // LoadAccessKey is a func to load AccessKey
-func LoadAccessKey(AccessKey string) (userID string, isAdmin bool, err error) {
+func LoadAccessKey(AccessKey string) (*pkg.AccessUser, error) {
 	if AccessKey == "" {
-		return "", false, errors.New("Empyt AccessKey")
+		return nil, errors.New("Empyt AccessKey")
 	}
 	u := new(pkg.AccessUser)
 	data, err := Decrypt(AccessKey)
 	if err != nil {
-		return "", false, err
+		return nil, err
 	}
 	if err := json.Unmarshal([]byte(data), &u); err != nil {
-		return "", false, err
+		return nil, err
 	}
-	return u.UserID, u.IsAdmin, nil
+	return u, nil
 }
