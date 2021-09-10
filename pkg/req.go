@@ -3,9 +3,24 @@ package pkg
 type SingleSMSReq struct {
 	PhoneNumber      string   `json:"phone_number"`
 	TemplateParamSet []string `json:"template_param_set"`
-	TemplateID       string   `json:"template_id"`
+	TemplateID       uint     `json:"template_id"`
+	SignID           *uint    `json:"sign_id,omitempty"`
 }
 
 type MultipleSMSReq struct {
-	MultipaleSMS []SingleSMSReq `json:"multipale_sms"`
+	PhoneNumber      []string `json:"phone_number"`
+	TemplateParamSet []string `json:"template_param_set"`
+	TemplateID       uint     `json:"template_id"`
+	SignID           *uint    `json:"sign_id,omitempty"`
+}
+
+type AddSignReq struct {
+	SignID string `json:"sign_id" binding:"required"`
+	Name   string `json:"name" binding:"required"`
+}
+
+type AddTemplateReq struct {
+	TemplateID  string `json:"template_id" binding:"required"`
+	Content     string `json:"content" binding:"required"`
+	ParamNumber int    `json:"param_number" binding:"required"`
 }
