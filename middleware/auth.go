@@ -16,14 +16,20 @@ import (
 	"github.com/gin-contrib/sessions"
 )
 
-func Auth() gin.HandlerFunc {
+func Authentication() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "Auth")
+		apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "Authentication")
 		span.SetAttributes(attribute.String("mode", config.Config.Application.Mode))
 		// skip when debugging
 		if config.Config.Application.Mode == pkg.ModeDebug {
-			ctx.Next()
+			// Debug user
+			au := &pkg.AccessUser{
+				UserID:  "xylonx",
+				IsAdmin: true,
+			}
+			ctx.Request = ctx.Request.WithContext(pkg.AddAccessUserIntoContext(ctx.Request.Context(), au))
 			span.End()
+			ctx.Next()
 			return
 		}
 
@@ -36,9 +42,9 @@ func Auth() gin.HandlerFunc {
 			span.AddEvent("session auth")
 			zapx.WithContext(apmCtx).Info("get accessUser from session")
 
-			ctx.Request = ctx.Request.WithContext(pkg.AddAccessUserIntoContext(apmCtx, au))
-			ctx.Next()
+			ctx.Request = ctx.Request.WithContext(pkg.AddAccessUserIntoContext(ctx.Request.Context(), au))
 			span.End()
+			ctx.Next()
 			return
 		}
 
@@ -56,17 +62,17 @@ func Auth() gin.HandlerFunc {
 				zapx.WithContext(apmCtx).Error("load accessUser from accessKey failed", zap.Error(err))
 
 				ctx.JSON(http.StatusBadRequest, pkg.ErrorResponse(err))
-				ctx.Abort()
 				span.End()
+				ctx.Abort()
 				return
 			}
 
 			span.SetAttributes(attribute.Any("accessUser", au))
 			zapx.WithContext(apmCtx).Info("get accessUser from accessKey successfully")
 
-			ctx.Request = ctx.Request.WithContext(pkg.AddAccessUserIntoContext(apmCtx, au))
-			ctx.Next()
+			ctx.Request = ctx.Request.WithContext(pkg.AddAccessUserIntoContext(ctx.Request.Context(), au))
 			span.End()
+			ctx.Next()
 			return
 		}
 
@@ -75,7 +81,40 @@ func Auth() gin.HandlerFunc {
 
 		// not auth
 		ctx.JSON(http.StatusUnauthorized, pkg.ErrorResponse(errors.New("not authorized")))
-		ctx.Abort()
 		span.End()
+		ctx.Abort()
+	}
+}
+
+// FIXME: run order is error
+func Authorization() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "Authorization")
+		au, err := pkg.GetAccessUserFromContext(ctx.Request.Context())
+		if err != nil {
+			span.SetStatus(codes.Error, err.Error())
+			span.RecordError(err)
+			zapx.WithContext(apmCtx).Error("get access user from context failed")
+
+			ctx.JSON(http.StatusInternalServerError, pkg.ErrorResponse(err))
+			span.End()
+			ctx.Abort()
+			return
+		}
+
+		if !au.IsAdmin {
+			err := errors.New("user is not admin. access delay")
+			span.SetStatus(codes.Error, err.Error())
+			span.RecordError(err)
+			zapx.WithContext(apmCtx).Error(err.Error())
+
+			ctx.JSON(http.StatusForbidden, err)
+			span.End()
+			ctx.Abort()
+			return
+		}
+
+		span.End()
+		ctx.Next()
 	}
 }
