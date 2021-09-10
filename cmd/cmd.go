@@ -62,6 +62,11 @@ func initConfig() {
 		zapx.Error("setup session failed", zap.Error(err))
 		os.Exit(1)
 	}
+
+	if err := utils.SetupSMSClient(); err != nil {
+		zapx.Error("setup tencent sms client failed", zap.Error(err))
+		os.Exit(1)
+	}
 }
 
 func run() error {

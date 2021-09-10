@@ -50,9 +50,10 @@ type TencentConfig struct {
 }
 
 type SMSConfig struct {
-	SDKAppID  string `mapstructure:"sdk_app_id"`
-	SecretID  string `mapstructure:"secret_id"`
-	SecretKey string `mapstructure:"secret_key"`
+	SDKAppID             string `mapstructure:"sdk_app_id"`
+	SecretID             string `mapstructure:"secret_id"`
+	SecretKey            string `mapstructure:"secret_key"`
+	DefaultVirtualSignId uint   `mapstructure:"default_virtual_sign_id"`
 }
 
 type WeWorkConfig struct {
