@@ -32,6 +32,7 @@ tencent:
     sdk_app_id:
     secret_id:
     secret_key:
+    default_virtual_sign_id:
 
   we_work:
     corp_id:
