@@ -1,3 +1,4 @@
+// Deprecated: the http handler will be removed soon.
 package handles
 
 import (

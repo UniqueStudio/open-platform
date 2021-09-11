@@ -17,7 +17,8 @@ type Settings struct {
 type ApplicationConfig struct {
 	Name       string `mapstructure:"name"`
 	Host       string `mapstructure:"host"`
-	Port       string `mapstructure:"port"`
+	HttpPort   string `mapstructure:"http_port"`
+	GrpcPort   string `mapstructure:"grpc_port"`
 	Hostname   string `mapstructure:"hostname"`
 	Mode       string `mapstructure:"mode"`
 	SecretKey  string `mapstructure:"secret_key"`
