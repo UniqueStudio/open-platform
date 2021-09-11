@@ -50,6 +50,9 @@ func Authentication() gin.HandlerFunc {
 
 		// API method
 		accessKey := ctx.GetHeader("AccessKey")
+		if accessKey == "" {
+			accessKey = ctx.GetHeader("Token")
+		}
 		if accessKey != "" {
 			span.SetAttributes(attribute.Any("accessKey", accessKey))
 			span.AddEvent("AccessKey auth")
