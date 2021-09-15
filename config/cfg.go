@@ -15,14 +15,16 @@ type Settings struct {
 }
 
 type ApplicationConfig struct {
-	Name       string `mapstructure:"name"`
-	Host       string `mapstructure:"host"`
-	HttpPort   string `mapstructure:"http_port"`
-	GrpcPort   string `mapstructure:"grpc_port"`
-	Hostname   string `mapstructure:"hostname"`
-	Mode       string `mapstructure:"mode"`
-	SecretKey  string `mapstructure:"secret_key"`
-	SessionKey string `mapstructure:"session_key"`
+	Name         string `mapstructure:"name"`
+	Host         string `mapstructure:"host"`
+	HttpPort     string `mapstructure:"http_port"`
+	GrpcPort     string `mapstructure:"grpc_port"`
+	GrpcCertFile string `mapstructure:"grpc_cert"`
+	GrpcKeyFile  string `mapstructure:"grpc_key"`
+	Hostname     string `mapstructure:"hostname"`
+	Mode         string `mapstructure:"mode"`
+	SecretKey    string `mapstructure:"secret_key"`
+	SessionKey   string `mapstructure:"session_key"`
 }
 
 type APMConfig struct {

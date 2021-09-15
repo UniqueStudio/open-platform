@@ -22,5 +22,5 @@ type AddSignReq struct {
 type AddTemplateReq struct {
 	TemplateID  string `json:"template_id" binding:"required"`
 	Content     string `json:"content" binding:"required"`
-	ParamNumber int    `json:"param_number" binding:"required"`
+	ParamNumber int32  `json:"param_number" binding:"required"`
 }

@@ -21,6 +21,7 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 var rootCmd = &cobra.Command{
@@ -107,25 +108,43 @@ func run() error {
 		ReadTimeout:  time.Second * 5,
 		WriteTimeout: time.Second * 5,
 	}
-	zapx.Info("start listen", zap.String("address", srv.Addr))
-	go func() {
-		if err := srv.ListenAndServe(); err != nil {
-			zapx.Error("listen and server failed", zap.Error(err))
-			return
-		}
-	}()
-	zapx.Info("Enter Control + C to Shutdown Server")
 
 	// init grpc router
 	lis, err := net.Listen("tcp", config.Config.Application.Host+":"+config.Config.Application.GrpcPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
-		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
-	)
+	s := new(grpc.Server)
+	if config.Config.Application.Mode == pkg.ModeDebug {
+		creds, err := credentials.NewServerTLSFromFile(
+			config.Config.Application.GrpcCertFile,
+			config.Config.Application.GrpcKeyFile,
+		)
+		if err != nil {
+			zapx.Fatal("new server credentials failed", zap.Error(err))
+		}
+		s = grpc.NewServer(
+			grpc.Creds(creds),
+			grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+			grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+		)
+	} else {
+		s = grpc.NewServer(
+			grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+			grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+		)
+	}
 	router.InitGrpcHandlers(s)
+
+	// start server
+	zapx.Info("start listen tcp for http server", zap.String("port", config.Config.Application.HttpPort))
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			zapx.Error("listen and server failed", zap.Error(err))
+			return
+		}
+	}()
+
 	zapx.Info("start listen tcp for grpc", zap.String("port", config.Config.Application.GrpcPort))
 	go func() {
 		if err := s.Serve(lis); err != nil {
@@ -134,6 +153,7 @@ func run() error {
 	}()
 
 	// below codes are used for graceful shutdown
+	zapx.Info("Enter Control + C to Shutdown Server")
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit

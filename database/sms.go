@@ -26,7 +26,7 @@ type SMSTemplate struct {
 	ID          uint   `gorm:"column:virtual_id;primarykey" json:"template_id"`
 	TemplateID  string `gorm:"column:template_id" json:"-"`
 	Content     string `gorm:"column:content" json:"content"`
-	ParamNumber int    `gorm:"column:param_number" json:"param_number"`
+	ParamNumber int32    `gorm:"column:param_number" json:"param_number"`
 }
 
 func (sign *SMSSignature) TableName() string {

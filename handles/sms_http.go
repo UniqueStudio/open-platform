@@ -42,7 +42,7 @@ func AddSMSSign(ctx *gin.Context) {
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		zapx.WithContext(apmCtx).Error("bind JSON failed", zap.Error(err))
+		zapx.WithContext(apmCtx).Error("insert sms signature failed", zap.Error(err))
 
 		ctx.JSON(http.StatusInternalServerError, pkg.ErrorResponse(err))
 		return
@@ -81,7 +81,7 @@ func AddSMSTemplate(ctx *gin.Context) {
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
 		span.RecordError(err)
-		zapx.WithContext(apmCtx).Error("bind JSON failed", zap.Error(err))
+		zapx.WithContext(apmCtx).Error("insert template failed", zap.Error(err))
 
 		ctx.JSON(http.StatusInternalServerError, pkg.ErrorResponse(err))
 		return
