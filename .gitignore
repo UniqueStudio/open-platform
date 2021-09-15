@@ -1,3 +1,6 @@
+.vscode/
+.idea/
+
 *.yaml
 !settings.default.yaml
 
