@@ -11,6 +11,12 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+type SMSTemplate struct {
+	ID			string `default:""`
+	ParamNum 	int		`yaml:"paramnum"`
+	Content 	string `default:""`
+}
+
 // Config is a struct for backend config
 type Config struct {
 	APPName string `default:"Gin App"`
@@ -26,6 +32,18 @@ type Config struct {
 		AppID  string `default:"" yaml:"appid"`
 		AppKey string `default:"" yaml:"appkey"`
 		Sign   string `default:"" yaml:"sign"`
+	}
+
+	//
+	TencentCloudSDKSMS struct {
+		SDKAppID  	string `default:""`
+		SecretID 	string `default:""`
+		SecretKey	string `default:""`
+		Templates   []*SMSTemplate
+		Signs 		[]*struct{
+			ID 			string `default:""`
+			Content 	string `default:""`
+		}
 	}
 
 	WeWork struct {
@@ -69,6 +87,7 @@ func LoadConfiguration() Config {
 		log.Fatal(err)
 	}
 
+	gin.SetMode(gin.DebugMode)
 	fmt.Printf("%s", gin.Mode())
 	ret, err := client.GetConfig("studio.open-platform."+gin.Mode(), "STUDIO")
 	if err != nil {
@@ -96,6 +115,7 @@ func LoadConfiguration() Config {
 	return config
 }
 
+
 // AppConfig is a struct loaded from config file
 //var AppConfig = LoadConfiguration()
 
@@ -112,3 +132,5 @@ func LoadLocalFile() Config {
 	return config
 }
 var AppConfig = LoadLocalFile()
+
+

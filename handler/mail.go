@@ -92,3 +92,4 @@ func encodeRFC2047(String string) string {
 	addr := mail.Address{Name: String, Address: ""}
 	return strings.Trim(addr.String(), "<@>")
 }
+
