@@ -2,8 +2,6 @@ kind: pipeline
 type: docker
 name: default
 
-clone:
-  disable: true
 
 steps:
 - name: Hello World
@@ -25,8 +23,8 @@ steps:
       auto_tag: true
       repo: uniquestudio/open-platform
 
-#trigger:
-#  branch:
-#    - master
-#  event:
-#    - push
+trigger:
+  branch:
+    - master
+  event:
+    - push
