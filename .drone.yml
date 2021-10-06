@@ -2,17 +2,10 @@ kind: pipeline
 type: docker
 name: default
 
-
-
 clone:
   disable: true
 
 steps:
-- name: clone
-  image: alpine/git
-  commands:
-    - git clone https://github.com/nothatDinger/open-platform.git .
-    - git checkout $DRONE_COMMIT
 - name: Hello World
   image: centos
   commands:
