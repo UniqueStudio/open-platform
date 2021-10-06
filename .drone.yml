@@ -7,7 +7,7 @@ steps:
   command:
     - go build main.go -o main
 
- - name: 打包Docker镜像并推送
+ - name: docker
    image: plugins/docker
    settings:
      username:
