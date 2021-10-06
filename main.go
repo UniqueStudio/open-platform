@@ -76,25 +76,25 @@ func main() {
 		weixin.PATCH("/user/:userID", handler.UpdateUserInfoHandler)
 	}
 
-	message := r.Group("/message")
-	message.Use(middleware.Auth())
+	Sms := r.Group("/sms")
+	Sms.Use(middleware.Auth())
 	{
-		message.POST("/sms", handler.SendSMSHandler)
-		r.POST("/message/sms/reply_callback", handler.ReplyCallbackHandler)
-		r.POST("/message/sms/status_callback", handler.StatusCallbackHandler)
-		message.GET("/sms/reply", handler.GetReplyHandler)
-		message.GET("/sms/status", handler.GetStatusHandler)
-		message.GET("/sms/template", handler.GetSMSTemplateHandler)
-		message.POST("/sms/template", handler.AddSMSTemplateHandler)
-		message.GET("/sms/template/:id", handler.GetSMSTemplateStatusHandler)
-		message.POST("/mail", handler.SendMailHandler)
+		Sms.POST("/send_single", handler.SendSingleSMSHandler)
+		Sms.POST("/send_group", handler.SendGroupSMSHandle)
+		Sms.GET("/templates", handler.GetTemplatesHandler)
+		Sms.GET("/reply_callback", handler.ReplyCallbackHandler)
 	}
 
 	open := r.Group("/open")
-	// open.Use(middleware.Auth())
+	open.Use(middleware.Auth())
 	{
-		open.POST("/sms", handler.PlatformSendSMS)
 		open.GET("/permission", handler.GetPermissionHandler)
+	}
+
+	mail := r.Group("/mail")
+	mail.Use(middleware.Auth())
+	{
+		mail.POST("/send_mail", handler.SendMailHandler)
 	}
 
 	r.GET("/v/:Shorturl", handler.MapShortUrlHandler)

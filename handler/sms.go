@@ -1,81 +1,112 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	v20190711 "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20190711"
+	"log"
 	"net/http"
 	"open-platform/db"
 	"open-platform/utils"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"regexp"
+	"strings"
+	"sync"
 )
 
+// 请求单次发送的json格式
 type sms struct {
-	Phone     string   `json:"phone"`
-	Template  int      `json:"template"`
-	ParamList []string `json:"param_list"`
+	PhoneNumber     	string   	`json:"phone_number"`
+	TemplateParamSet 	[]string 	`json:"template_param_set"`
+	TemplateID  		string      `json:"template_id"`
 }
 
-// GetSMSTemplateHandler is a func to get sms template
-func GetSMSTemplateHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": utils.GetQCSMSTemplate().Data})
-}
 
-// GetSMSTemplateStatusHandler is a func to get sms template
-func GetSMSTemplateStatusHandler(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	data, err := utils.GetQCSMSTemplateStatus([]uint{uint(id)})
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
-
-	}
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": data})
-}
-
-// AddSMSTemplateHandler is a func to get sms template
-func AddSMSTemplateHandler(c *gin.Context) {
-	var info templateInfo
-	c.BindJSON(&info)
-	data, err := utils.AddQCSMSTemplate(info.Title, info.Text, info.Remark)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err.Error()})
-	}
-
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": data})
-}
-
-// SendSMSHandler is a func to send sms via sms template
-func SendSMSHandler(c *gin.Context) {
+func SendSingleSMSHandler(c *gin.Context) {
 	var data sms
 	c.BindJSON(&data)
-	isOK, message, errID := utils.SendQCSMS(data.Phone, data.Template, data.ParamList)
-
-	if isOK {
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK"})
-		return
-	}
-
-	c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": message, "error_id": errID})
-
-}
-
-// ReplyCallbackHandler is a handler to receive sms reply callback request
-func ReplyCallbackHandler(c *gin.Context) {
-	var replyData db.Reply
-	c.BindJSON(&replyData)
-	_, err := db.ORM.Insert(&replyData)
+	log.Println(data)
+	err := CheckSMS(&data)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
+		c.JSON(http.StatusBadRequest, gin.H{"code":http.StatusBadRequest, "data": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK"})
-
+	data.PhoneNumber = "+86"+data.PhoneNumber
+	smsResponse, err:= utils.SendSingleSms(data.PhoneNumber, data.TemplateParamSet, data.TemplateID )
+	if err != nil {
+		// 应该是服务端的问题
+		c.JSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "data": err.Error()})
+	}
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": smsResponse})
 }
 
-// StatusCallbackHandler is a handler to receive sms Status callback request
-func StatusCallbackHandler(c *gin.Context) {
+func SendGroupSMSHandle(c *gin.Context) {
+	var wg sync.WaitGroup
+	var data []sms
+	c.BindJSON(&data)
+	log.Println(data)
+	var errMsgs []string
+	var responses []*v20190711.SendSmsResponse
+	for _, perSms := range data {
+		err := CheckSMS(&perSms)
+		if err != nil {
+			errMsgs = append(errMsgs, err.Error())
+			continue
+		}
+		perSms.PhoneNumber = "+86" + perSms.PhoneNumber
+		wg.Add(1)
+		go func(perSms sms) {
+			defer wg.Done()
+			smsResponse, err := utils.SendSingleSms(perSms.PhoneNumber, perSms.TemplateParamSet, perSms.TemplateID)
+			if err != nil {
+				errMsgs = append(errMsgs, err.Error())
+			}
+			responses = append(responses, smsResponse)
+		}(perSms)
+	}
+	wg.Wait()
+	c.JSON(http.StatusOK, gin.H{"code":http.StatusOK, "data": responses, "error": errMsgs})
+}
+
+
+func GetTemplatesHandler(c *gin.Context) {
+	allTemplates := utils.GetTemplates()
+	if len(allTemplates) == 0 {
+		c.JSON(http.StatusOK, gin.H{"code": http.NotFound, "data": "No templates found."})
+	}
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "data": allTemplates})
+}
+
+
+func CheckSMS(data *sms) error {
+	// 模板存在
+	allTemplates := utils.GetTemplates()
+	var template *utils.SMSTemplate = nil
+	for _, temp := range allTemplates {
+		if temp.ID == data.TemplateID {
+			template = temp
+			break
+		}
+	}
+	paramSetString := strings.Join(data.TemplateParamSet, ",")
+	if template == nil {
+		return errors.New(fmt.Sprintf("[Paraments:%s] [TemplateID:%s]:Template not exists",paramSetString, data.TemplateID))
+	}
+	// 参数匹配
+	if template.ParamNum != len(data.TemplateParamSet) {
+		return errors.New(fmt.Sprintf("[Paraments:%s] ParamNumber error. Template Content:%s",
+			paramSetString, template.Content))
+	}
+	// 电话号码，11位且数字（不加+86）
+	match, _ := regexp.Match(`^[0-9]{11}$`, []byte(data.PhoneNumber))
+	if !match{
+		return errors.New(fmt.Sprintf("[Paraments:%s] [PhoneNumber:%s] Format error",paramSetString, data.PhoneNumber))
+	}
+	return nil
+}
+
+func ReplyCallbackHandler(c *gin.Context) {
+	fmt.Println(c.Params)
 	var statusData []db.Status
 	c.BindJSON(&statusData)
 
@@ -86,36 +117,4 @@ func StatusCallbackHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK"})
-}
-
-// GetReplyHandler is a handler to receive sms Status callback request
-func GetReplyHandler(c *gin.Context) {
-	replyList := make([]db.Reply, 0)
-
-	err := db.ORM.Find(&replyList)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": replyList})
-}
-
-// GetStatusHandler is a handler to receive sms Status callback request
-func GetStatusHandler(c *gin.Context) {
-	statusList := make([]db.Status, 0)
-
-	err := db.ORM.Find(&statusList)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusBadRequest, "message": err})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": "OK", "data": statusList})
-}
-
-type templateInfo struct {
-	Title  string `json:"title"`
-	Text   string `json:"text"`
-	Remark string `json:"remark"`
 }
