@@ -18,9 +18,5 @@ steps:
       repo: uniquestudio/open-platform
 
 trigger:
-
-  branch:
-  - master
-  - test
   event:
   - push
