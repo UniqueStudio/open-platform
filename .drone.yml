@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: default
 
 steps:
@@ -8,7 +9,7 @@ steps:
   - echo Hello World
 - name: build
   image: golang
-  command:
+  commands:
   - go build main.go -o main
 
 - name: docker
