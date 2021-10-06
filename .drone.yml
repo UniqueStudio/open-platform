@@ -2,6 +2,10 @@ kind: pipeline
 name: default
 
 steps:
+- name: Hello World
+  image: centos
+  commands:
+  - echo Hello World
 - name: build
   image: golang
   command:
@@ -20,3 +24,4 @@ steps:
 trigger:
   event:
   - push
+  - pull_request
