@@ -5,14 +5,18 @@ steps:
 - name: build
   image: golang
   command:
-    - go build main.go -o main
+  - go build main.go -o main
 
- - name: 打包Docker镜像并推送
-   image: plugins/docker
-   settings:
-     username:
-       from_secret: docker_hub_username
-     password:
-       from_secret: docker_hub_password
-     auto_tag: true
-     repo: uniquestudio/open-platform
+- name: docker
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_hub_username
+    password:
+      from_secret: docker_hub_password
+      auto_tag: true
+      repo: uniquestudio/open-platform
+
+trigger:
+  event:
+  - push
