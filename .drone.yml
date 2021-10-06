@@ -16,3 +16,11 @@ steps:
       from_secret: docker_hub_password
       auto_tag: true
       repo: uniquestudio/open-platform
+
+trigger:
+
+  branch:
+  - master
+  - test
+  event:
+  - push
