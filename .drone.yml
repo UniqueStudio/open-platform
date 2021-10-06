@@ -7,11 +7,13 @@ steps:
 - name: Hello World
   image: centos
   commands:
-  - echo Hello World
+    - echo Hello World
 - name: build
   image: golang
   commands:
-  - go build main.go -o main
+    - go env -w GO111MODULE=on
+    - go env -w GOPROXY="https://goproxy.cn,direct"
+    - go build -o main main.go
 
 - name: docker
   image: plugins/docker
