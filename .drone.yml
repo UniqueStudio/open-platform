@@ -1,10 +1,16 @@
 kind: pipeline
+type: docker
 name: default
 
+
 steps:
+- name: Hello World
+  image: centos
+  commands:
+  - echo Hello World
 - name: build
   image: golang
-  command:
+  commands:
   - go build main.go -o main
 
 - name: docker
@@ -18,5 +24,7 @@ steps:
       repo: uniquestudio/open-platform
 
 trigger:
+  branch:
+    - master
   event:
-  - push
+    - push
