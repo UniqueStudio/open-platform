@@ -15,9 +15,10 @@ import (
 )
 
 func main() {
-
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(gin.Logger())
+
 
 	// CORS support
 	r.Use(middleware.CORSMiddleware())

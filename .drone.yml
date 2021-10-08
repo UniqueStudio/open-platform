@@ -1,0 +1,59 @@
+kind: pipeline
+type: docker
+name: default
+
+clone:
+  disable: true
+
+steps:
+  - name: clone
+    image: alpine/git
+    commands:
+      - git config --global url."https://hub.fastgit.org".insteadOf https://github.com
+      - git clone -b $DRONE_COMMIT_BRANCH $DRONE_GIT_HTTP_URL .
+
+  - name: publish
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_hub_username
+      password:
+        from_secret: docker_hub_password
+      auto_tag: true
+      registry: ccr.ccs.tencentyun.com
+      repo: ccr.ccs.tencentyun.com/unique-studio/open-platform
+    volumes:
+      - name: sock
+        path: /var/run/docker.sock
+      - name: local
+        path: /var/lib/docker
+
+  - name: deploy
+    image: tmaier/docker-compose
+    volumes:
+      - name: sock
+        path: /var/run/docker.sock
+      - name: config
+        path: /tmp
+    commands:
+      - pwd
+      - cd /tmp
+      - docker-compose up -d
+volumes:
+  - name: sock
+    host:
+      path: /var/run/docker.sock
+  - name: local
+    host:
+      path: /var/lib/docker
+  - name: config
+#把宿主机的config和docker-compose.yml挂载进docker
+    host:
+      path: /root/service/open-platform
+
+trigger:
+  branch:
+    - dev
+  event:
+    - push
+    - tag
