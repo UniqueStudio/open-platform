@@ -13,4 +13,5 @@ config.deploy.yml
 *.json
 gin-bin
 coverage.txtg
+docker-compose.yaml
 debu
