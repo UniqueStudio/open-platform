@@ -74,8 +74,8 @@ volumes:
     host:
       path: /root/service-dev/open-platform
   - name: config-prod
-      host:
-        path: /root/service/open-platform
+    host:
+      path: /root/service/open-platform
 
 trigger:
   branch:
