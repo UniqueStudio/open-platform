@@ -1,22 +1,18 @@
-# open-platform
+# Open-Platform
 
-| Service         | Url                                                  |
-| :-------------- | :--------------------------------------------------- |
-| **URL**         | <https://open.hustunique.com>                        |
-| **Exposed API** | <https://github.com/UniqueStudio/open-platform/wiki> |
+the api is in [yapi](https://yapi.hustunique.com/project/11/interface/api)
 
-## 1. Intro
+The Open-platform is the toolbox of the UniqueStudio. 
 
-open-plaform is a project expose services & info of Unique Studio in one endpoint
+There are 2 ways to use it:
 
-| Skill                                | Service Provider |
-| :----------------------------------- | :--------------- |
-| Application Configuration Management | Aliyun           |
-| Contact Management                   | Work Weixin      |
-| Third party appliaction login        | Work Weixin      |
-| SMS                                  | Tencent Cloud    |
-| Email                                | Aliyun           |
+- HTTP (old way)
+- gRPC (recommended)
 
-## 2. Apidoc
+The HTTP APIs are in yapi below. For gRPC, the proto IDL is in [UniqueIDL.SMS](https://github.com/UniqueStudio/UniqueIDL/blob/master/sms.proto). 
 
-please visit [wiki](https://github.com/UniqueStudio/open-platform/wiki).
+In deployment environment, all services are in a subnet, therefore, using gRPC without TLS is sufficient. For debug use, TLS is required. The server cert should ask DevOps to acquire.
+
+## Ability
+
+1. Push SMS

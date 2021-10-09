@@ -1,0 +1,42 @@
+application:
+  name: open-platform
+  host: 0.0.0.0
+  port: 5000
+  hostname: https://open.hustunique.com
+  mode: prod
+  secret_key: # used to generate api secret key
+  session_key:
+
+apm:
+  reporter_backend:
+
+short_link:
+  url:
+
+database:
+  postgres:
+    user_dsn:
+    open_dsn:
+
+email:
+  smtp:
+    sender: cr@hustunique.com
+    password: 5D29KaMLg7RlG5dE
+    host: 465
+  email_template:
+    - template_id:
+      filename:
+
+tencent:
+  sms:
+    sdk_app_id:
+    secret_id:
+    secret_key:
+    default_virtual_sign_id:
+
+  we_work:
+    corp_id:
+    agent_id:
+    agent_secret:
+    secret:
+    contact_secret:
