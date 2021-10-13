@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option go_package = "github.com/ccccrrrr/open-platform/tree/rebuild/pb/email";
+
+package email;
+
+message EmailStatus {
+  string To = 1;
+  bool Err = 2;
+  string ErrMsg = 3;
+}
+
+message PushEmailRequest {
+  repeated string To = 1;
+  repeated string TemplateParamSet = 2;
+  uint32 TemplateID = 3;
+  string Subject = 4;
+}
+
+message PushEmailResponse {
+  repeated EmailStatus EmailStatus = 1;
+}
+
+message EmailTemplate {
+  string Content = 1;
+  uint32 ParamNumber = 2;
+  uint32 TemplateID = 3;
+  string TemplateName = 4;
+}
+
+message AddEmailTemplateRequest {
+  repeated EmailTemplate EmailTemplate = 1;
+}
+
+message AddEmailTemplateResponse {
+  bool Success = 1;
+}
+
+message GetAllTemplatesRequest {}
+
+message GetAllTemplatesResponse {
+  repeated EmailTemplate EmailTemplate = 1;
+}
+

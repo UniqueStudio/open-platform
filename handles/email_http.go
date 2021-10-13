@@ -16,19 +16,6 @@ func GetEmailTemplateHandler(ctx *gin.Context) {
 	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "AddSMSTemplate")
 	defer span.End()
 
-	data := new(pkg.SingleEmailReq)
-	if err := ctx.ShouldBindJSON(data); err != nil {
-		span.SetStatus(codes.Error, err.Error())
-		span.RecordError(err)
-		zapx.WithContext(apmCtx).Error("bind JSON failed", zap.Error(err))
-
-		ctx.JSON(http.StatusBadRequest, pkg.ErrorResponse(err))
-		return
-	}
-
-	span.SetAttributes(attribute.Any("requestBody", data))
-	zapx.WithContext(apmCtx).Info("bind JSON sufficiently")
-
 	templates, err := database.GetAllEmailTemplate(ctx)
 
 	if err != nil {
@@ -43,11 +30,10 @@ func GetEmailTemplateHandler(ctx *gin.Context) {
 	span.SetAttributes(attribute.Any("templates", templates))
 	zapx.WithContext(apmCtx).Info("get all email templates sufficiently")
 	ctx.JSON(http.StatusOK, pkg.SuccessResponse(templates))
-
 }
 
 func SendSingleEmailHandler(ctx *gin.Context) {
-	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "AddSMSTemplate")
+	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "SendSingleEmailTemplate")
 	defer span.End()
 
 	data := new(pkg.SingleEmailReq)
@@ -63,7 +49,7 @@ func SendSingleEmailHandler(ctx *gin.Context) {
 	span.SetAttributes(attribute.Any("requestBody", data))
 	zapx.WithContext(apmCtx).Info("bind JSON sufficiently")
 
-	resp, err := utils.SendSingleEmail(data.EmailTo, data.TemplateParamSet, data.TemplateID)
+	resp, err := utils.SendSingleEmail(apmCtx, data.EmailTo, data.TemplateID, data.Subject, data.TemplateParamSet)
 
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())
@@ -72,15 +58,13 @@ func SendSingleEmailHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, pkg.ErrorResponse(err))
 		return
 	}
-
 	span.SetAttributes(attribute.Any("send email Response", resp))
 	zapx.WithContext(apmCtx).Info("send single email sufficiently")
 	ctx.JSON(http.StatusOK, pkg.SuccessResponse(resp))
-
 }
 
 func SendGroupEmailHandler(ctx *gin.Context) {
-	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "AddSMSTemplate")
+	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "SendGroupEmail")
 	defer span.End()
 
 	data := new(pkg.MultipleEmailReq)
@@ -95,8 +79,44 @@ func SendGroupEmailHandler(ctx *gin.Context) {
 
 	span.SetAttributes(attribute.Any("requestBody", data))
 	zapx.WithContext(apmCtx).Info("bind JSON sufficiently")
+	resp, err := utils.SendMultipleEmail(apmCtx, data.EmailTo, data.TemplateID, data.Subject, data.TemplateParamSet)
 
-	resp, err := utils.SendMultipleEmail(data.EmailTo, data.TemplateParamSet, data.TemplateID)
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
+		zapx.WithContext(apmCtx).Error("send single email failed")
+		ctx.JSON(http.StatusInternalServerError, pkg.ErrorResponse(err))
+		return
+	}
+
+	span.SetAttributes(attribute.Any("send group email Response", resp))
+	zapx.WithContext(apmCtx).Info("send group email sufficiently")
+	ctx.JSON(http.StatusOK, pkg.SuccessResponse(resp))
+}
+
+func InsertEmailTemplateHandler(ctx *gin.Context) {
+	apmCtx, span := utils.Tracer.Start(ctx.Request.Context(), "AddEmailTemplate")
+	defer span.End()
+
+	data := pkg.EmailTemplatesReq{}
+	if err := ctx.ShouldBindJSON(&data); err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
+		zapx.WithContext(apmCtx).Error("bind JSON failed", zap.Error(err))
+
+		ctx.JSON(http.StatusBadRequest, pkg.ErrorResponse(err))
+		return
+	}
+
+	span.SetAttributes(attribute.Any("requestBody", data))
+	zapx.WithContext(apmCtx).Info("bind JSON sufficiently")
+
+	template := database.EmailTemplate{}
+	template.TemplateID = data.TemplateID
+	template.Content = data.Content
+	template.ParamNumber = data.ParamNumber
+
+	resp, err := database.InsertEmailTemplate(ctx, &[]database.EmailTemplate{template})
 
 	if err != nil {
 		span.SetStatus(codes.Error, err.Error())

@@ -1,0 +1,51 @@
+application:
+  name: open-platform
+  host: 0.0.0.0
+  port: 5000
+  hostname: localhost
+  mode: prod
+  secret_key: # used to generate api secret key
+  session_key:
+  http_port: 5000
+  grpc_port: 5001
+
+apm:
+  reporter_backend:
+
+short_link:
+  url:
+
+database:
+  postgres:
+    user_dsn: "host=localhost user=postgres password=  dbname=user port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+    open_dsn: "host=localhost user=postgres password=  dbname=open port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+  redis:
+    addr: "localhost:6379"
+    password: ""
+    db: 0
+
+
+email:
+  smtp:
+    sender: "cr@hustunique.com"
+    password: "5D29KaMLg7RlG5dE"
+    host: "smtp.larksuite.com"
+    port: 465
+    name: "cr@hustunique.com"
+  email_template:
+    - template_id:
+      filename:
+
+tencent:
+  sms:
+    sdk_app_id:
+    secret_id:
+    secret_key:
+    default_virtual_sign_id:
+
+  we_work:
+    corp_id:
+    agent_id:
+    agent_secret:
+    secret:
+    contact_secret:

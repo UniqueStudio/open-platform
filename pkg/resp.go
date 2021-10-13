@@ -35,9 +35,9 @@ type SMSSendStatus struct {
 }
 
 type EmailSendStatus struct {
-	ErrCode string `json:"err_code,omitempty"`
-	Message string `json:"message,omitempty"`
-
+	Err          string   `json:"err_code,omitempty"`
+	ErrIndexFrom int      `json:"err_index,omitempty"`
+	To           []string `json:"to,omitempty"`
 }
 
 func TencentSMSToSMSResp(resp *sms.SendSmsResponse) *[]SMSSendStatus {

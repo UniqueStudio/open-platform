@@ -2,10 +2,9 @@
 .idea/
 
 *.yaml
-!settings.default.yaml
+!settings.yaml
 
 .old/
 
 open-platform
 
-*.proto

@@ -1,44 +1,72 @@
 package utils
 
 import (
+	"context"
+	"fmt"
+	"github.com/UniqueStudio/open-platform/config"
+	"github.com/UniqueStudio/open-platform/database"
 	"github.com/UniqueStudio/open-platform/pkg"
-	"net/smtp"
-	"crypto/tls"
+	gomail "github.com/go-mail/gomail"
+	"log"
+	"time"
 )
 
-
-type EmailClient struct {
-	host string
-	port uint
-	secret string
+type MailClient struct {
+	Host string
+	Port int
+	Sender string
+	Password string
+	Name string
+	ContentType string
 }
 
-var (
-	client *EmailClient
-)
+var mailClient *MailClient
 
 func SetupEmailClient() error {
-
+	mailClient = &MailClient{
+		Host:     config.Config.Email.SMTP.Host,
+		Port:     config.Config.Email.SMTP.Port,
+		Sender:   config.Config.Email.SMTP.Sender,
+		Password: config.Config.Email.SMTP.Password,
+		Name:     config.Config.Email.SMTP.Name,
+		ContentType: "text/html; charset=UTF-8",
+	}
+	return nil
 }
 
+func SendSingleEmail(ctx context.Context, to string, templateID uint, subject string, paramSet []string) (*pkg.EmailSendStatus, error) {
+	m := gomail.NewMessage()
+	m.SetHeader("From", mailClient.Name)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	template := database.GetEmailTemplateByID(ctx, templateID)
+	var set []interface{}
+	for _, v := range paramSet {
+		set = append(set, v)
+	}
+	m.SetBody(mailClient.ContentType, fmt.Sprintf(template.Content, set...))
 
-func CheckConn() error {
-	
+	d := gomail.NewDialer(mailClient.Host, mailClient.Port, mailClient.Sender, mailClient.Password)
+
+	err := d.DialAndSend(m)
+	if err != nil {
+		log.Println(err)
+		return &pkg.EmailSendStatus{Err: err.Error()}, err
+	}
+	m.Reset()
+	return &pkg.EmailSendStatus{}, nil
 }
 
-func SendSingleEmail(to string, paramSet []string, templateID uint) (*pkg.EmailSendStatus, error) {
-	
+func SendMultipleEmail(ctx context.Context, to []string, templateID uint, subject string, paramSet [][]string) (*pkg.EmailSendStatus, error) {
+	for i := 0; i < len(to); i++ {
+			status, err := SendSingleEmail(ctx, to[i], templateID, subject, paramSet[i])
+			if err != nil {
+				log.Println(err)
+				status.To = to[i:]
+				status.ErrIndexFrom = i
+				return status, err
+			}
+			time.Sleep(time.Second)
+	}
+	return &pkg.EmailSendStatus{}, nil
 }
-
-func SendMultipleEmail(to []string, paramSet []string, templateID uint) ([]*pkg.EmailSendStatus, error) {
-
-}
-
-func GetEmailTemplates()
-
-
-
-func (client *EmailClient) Close() error {
-
-}
-
