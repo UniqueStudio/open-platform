@@ -12,7 +12,7 @@ type EmailTemplate struct {
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	TemplateID   uint32 `gorm:"column:template_id" json:"template_id"`
+	TemplateID   uint32 `gorm:"primary_key;column:template_id" json:"template_id"`
 	TemplateName string `gorm:"column:template_id" json:"-"`
 	Content      string `gorm:"column:content" json:"content"`
 	ParamNumber  uint32 `gorm:"column:param_number" json:"param_number"`

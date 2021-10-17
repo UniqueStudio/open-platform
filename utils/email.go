@@ -8,7 +8,6 @@ import (
 	"github.com/UniqueStudio/open-platform/pkg"
 	gomail "github.com/go-mail/gomail"
 	"log"
-	"time"
 )
 
 type MailClient struct {
@@ -39,6 +38,7 @@ func SendSingleEmail(ctx context.Context, to string, templateID uint, subject st
 	m.SetHeader("From", mailClient.Name)
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
+
 	template := database.GetEmailTemplateByID(ctx, templateID)
 	var set []interface{}
 	for _, v := range paramSet {
@@ -48,25 +48,28 @@ func SendSingleEmail(ctx context.Context, to string, templateID uint, subject st
 
 	d := gomail.NewDialer(mailClient.Host, mailClient.Port, mailClient.Sender, mailClient.Password)
 
+	resp := &pkg.EmailSendStatus{
+		To:           to,
+		Content:      fmt.Sprintf(template.Content, set...),
+	}
+
 	err := d.DialAndSend(m)
 	if err != nil {
-		log.Println(err)
-		return &pkg.EmailSendStatus{Err: err.Error()}, err
+		resp.Err = err.Error()
+		return resp, err
 	}
 	m.Reset()
-	return &pkg.EmailSendStatus{}, nil
+	return resp, nil
 }
 
-func SendMultipleEmail(ctx context.Context, to []string, templateID uint, subject string, paramSet [][]string) (*pkg.EmailSendStatus, error) {
+func SendMultipleEmail(ctx context.Context, to []string, templateID uint, subject string, paramSet [][]string) ([]*pkg.EmailSendStatus, error) {
+	status := make([]*pkg.EmailSendStatus, 0)
 	for i := 0; i < len(to); i++ {
-			status, err := SendSingleEmail(ctx, to[i], templateID, subject, paramSet[i])
+			resp, err := SendSingleEmail(ctx, to[i], templateID, subject, paramSet[i])
 			if err != nil {
 				log.Println(err)
-				status.To = to[i:]
-				status.ErrIndexFrom = i
-				return status, err
 			}
-			time.Sleep(time.Second)
+			status = append(status, resp)
 	}
-	return &pkg.EmailSendStatus{}, nil
+	return status, nil
 }

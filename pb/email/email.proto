@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/ccccrrrr/open-platform/tree/rebuild/pb/email";
+option go_package = "../email";
 
 package email;
 
@@ -34,11 +34,21 @@ message AddEmailTemplateRequest {
 
 message AddEmailTemplateResponse {
   bool Success = 1;
+  repeated EmailTemplate templates = 2;
 }
 
 message GetAllTemplatesRequest {}
 
 message GetAllTemplatesResponse {
-  repeated EmailTemplate EmailTemplate = 1;
+  bool Err = 1;
+  string ErrMsg = 2;
+  repeated EmailTemplate EmailTemplate = 3;
 }
 
+
+
+service EmailService {
+  rpc PushEmail(PushEmailRequest) returns(PushEmailResponse);
+  rpc AddEmailTemplate(AddEmailTemplateRequest) returns(AddEmailTemplateResponse);
+  rpc GetAllEmailTemplate(GetAllTemplatesRequest) returns(GetAllTemplatesResponse);
+}
