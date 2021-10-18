@@ -16,3 +16,4 @@ In deployment environment, all services are in a subnet, therefore, using gRPC w
 ## Ability
 
 1. Push SMS
+2. Push Email

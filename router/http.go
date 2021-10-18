@@ -17,7 +17,10 @@ func InitRouter(r *gin.Engine) {
 	})
 
 	smsrouter := r.Group("/sms")
+	emailrouter := r.Group("/email")
+
 	initSMSRouter(smsrouter)
+	initEmailRouter(emailrouter)
 }
 
 func initSMSRouter(r *gin.RouterGroup) {
@@ -28,4 +31,14 @@ func initSMSRouter(r *gin.RouterGroup) {
 	r.POST("/send_single", handles.SendSingleSMSHandler)
 	r.POST("/send_group", handles.SendGroupSMSHandler)
 	r.GET("/templates", handles.GetSMSTemplateHandler)
+}
+
+func initEmailRouter(r *gin.RouterGroup) {
+	r.Use(middleware.Authentication())
+	r.Use(middleware.Authorization())
+
+	r.GET("/templates", handles.GetEmailTemplateHandler)
+	r.POST("/send_single", handles.SendSingleEmailHandler)
+	r.POST("/send_group", handles.SendGroupEmailHandler)
+	r.POST("/templates", handles.InsertEmailTemplateHandler)
 }

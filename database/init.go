@@ -60,5 +60,11 @@ func initTables() error {
 		}
 	}
 
+	if !OpenDB.Migrator().HasTable(&EmailTemplate{}) {
+		if err := OpenDB.AutoMigrate(&EmailTemplate{}); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

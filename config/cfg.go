@@ -76,6 +76,8 @@ type SMTPConfig struct {
 	Sender   string `mapstructure:"sender"`
 	Password string `mapstructure:"password"`
 	Host     string `mapstructure:"host"`
+	Name     string `mapstructure:"name"`
+	Port     int    `mapstructure:"port"`
 }
 
 type EmailTemplateConfig struct {
