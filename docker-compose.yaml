@@ -1,0 +1,35 @@
+version: "3.9"
+
+x-logging: &loki-logging
+    driver: loki
+    options:
+        loki-url: http://localhost:3100/loki/api/v1/push
+        loki-external-labels: job=dockerlogs,maintainer=xylonx,environment=development
+        loki-pipeline-stages: |
+            - json:
+                expressions:
+                    traceId: TraceID
+                    spanId: SpanID
+                    level: level
+            - labels:
+                traceId:
+                spanId:
+                level:
+
+services:
+    open-platform:
+        image: ccr.ccs.tencentyun.com/unique-studio/open-platform:${DRONE_TAG:-latest}
+        container_name: dev-open
+        restart: on-failure:5
+        volumes:
+            - /root/service-dev/open-platform/settings.yaml:/opt/open-platform/settings.yaml
+        ports:
+            - 6001:5000
+        networks:
+            - db_network
+        logging: *loki-logging
+
+networks:
+    db_network:
+        external: true
+        name: database

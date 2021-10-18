@@ -1,6 +1,6 @@
 kind: pipeline
 type: docker
-name: default
+name: open-platform
 
 clone:
   disable: true
@@ -9,8 +9,7 @@ steps:
   - name: clone
     image: alpine/git
     commands:
-      - git config --global url."https://hub.fastgit.org".insteadOf https://github.com
-      - git clone -b $DRONE_COMMIT_BRANCH $DRONE_GIT_HTTP_URL .
+      - git clone --depth=1 -b $DRONE_COMMIT_BRANCH https://github.com.cnpmjs.org/UniqueStudio/open-platform.git .
 
   - name: build_publish
     image: plugins/docker
@@ -19,7 +18,7 @@ steps:
         from_secret: docker_hub_username
       password:
         from_secret: docker_hub_password
-      auto_tag: true
+      tags: ${DRONE_TAG=latest}
       registry: ccr.ccs.tencentyun.com
       repo: ccr.ccs.tencentyun.com/unique-studio/open-platform
     volumes:
@@ -29,39 +28,32 @@ steps:
         path: /var/lib/docker
 
   - name: deploy_dev
-    image: tmaier/docker-compose
+    image: docker/compose:1.29.2
+    commands:
+      - docker-compose up -d --remove-orphans
     depends_on:
       - build_publish
     volumes:
       - name: sock
         path: /var/run/docker.sock
-      - name: config_dev
-        path: /tmp
-    commands:
-      - pwd
-      - cd /tmp
-      - docker-compose up -d
     when:
       branch:
         - dev
       event:
         - push
   - name: deploy_prod
-    image: tmaier/docker-compose
+    image: docker/compose:1.29.2
+    commands:
+      - docker-compose up -d --remove-orphans
     depends_on:
       - build_publish
     volumes:
       - name: sock
         path: /var/run/docker.sock
-      - name: config
-        path: /tmp
-    commands:
-      - pwd
-      - cd /tmp
-      - docker-compose up -d
     when:
       event:
         - tag
+
 volumes:
   - name: sock
     host:
@@ -70,7 +62,7 @@ volumes:
     host:
       path: /var/lib/docker
   - name: config_dev
-#把宿主机的config和docker-compose.yml挂载进docker
+    #把宿主机的config和docker-compose.yml挂载进docker
     host:
       path: /root/service-dev/open-platform
   - name: config-prod

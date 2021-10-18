@@ -3,6 +3,7 @@
 
 *.yaml
 !settings.default.yaml
+!docker-compose.yaml
 
 .old/
 
