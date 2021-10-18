@@ -13,6 +13,8 @@ steps:
 
   - name: build_publish
     image: plugins/docker
+    depends_on:
+      - clone
     settings:
       username:
         from_secret: docker_hub_username
