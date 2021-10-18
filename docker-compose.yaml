@@ -19,7 +19,7 @@ x-logging: &loki-logging
 services:
     open-platform:
         image: ccr.ccs.tencentyun.com/unique-studio/open-platform:${DRONE_TAG:-latest}
-        container_name: dev-open
+        container_name: dev-open-platform
         restart: on-failure:5
         volumes:
             - /root/service-dev/open-platform/settings.yaml:/opt/open-platform/settings.yaml
