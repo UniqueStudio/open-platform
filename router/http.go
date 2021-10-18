@@ -34,8 +34,8 @@ func initSMSRouter(r *gin.RouterGroup) {
 }
 
 func initEmailRouter(r *gin.RouterGroup) {
-	//r.Use(middleware.Authentication())
-	//r.Use(middleware.Authorization())
+	r.Use(middleware.Authentication())
+	r.Use(middleware.Authorization())
 
 	r.GET("/templates", handles.GetEmailTemplateHandler)
 	r.POST("/send_single", handles.SendSingleEmailHandler)

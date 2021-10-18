@@ -53,7 +53,7 @@ func (lec *LarkEmailClient) PushEmail(ctx context.Context, req *email.PushEmailR
 
 	zapx.WithContext(apmCtx).Info("push email successfully", zap.Any("resp", data))
 
-	return &email.PushEmailResponse{EmailStatus: data},nil
+	return &email.PushEmailResponse{EmailStatus: data}, nil
 }
 
 func (lec *LarkEmailClient) AddEmailTemplate(ctx context.Context, in *email.AddEmailTemplateRequest) (*email.AddEmailTemplateResponse, error) {
