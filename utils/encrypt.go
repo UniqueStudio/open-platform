@@ -9,6 +9,8 @@ import (
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/UniqueStudio/open-platform/config"
 )
 
 func addBase64Padding(value string) string {
@@ -45,7 +47,7 @@ func Unpad(src []byte) ([]byte, error) {
 
 // Encrypt is func to Eecrypt string
 func Encrypt(text string) (string, error) {
-	block, err := aes.NewCipher([]byte(AppConfig.Server.SecretKey))
+	block, err := aes.NewCipher([]byte(config.Config.Application.SecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +67,7 @@ func Encrypt(text string) (string, error) {
 
 // Decrypt is func to Decrypt string
 func Decrypt(text string) (string, error) {
-	block, err := aes.NewCipher([]byte(AppConfig.Server.SecretKey))
+	block, err := aes.NewCipher([]byte(config.Config.Application.SecretKey))
 	if err != nil {
 		return "", err
 	}

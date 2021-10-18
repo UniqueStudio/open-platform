@@ -1,18 +1,28 @@
-export PROJECT_PATH = $GOPATH/src/family-tree
+PROJECT:=open-platform
+CONFIG_FILE:=./settings.yaml
+GO_MODULE_STATE:=$(shell go env GO111MODULE)
+GO_PROXY:=$(shell go env GOPROXY)
 
-all: test
+.PHONY: build dep serve clean
 
-env:
-	export GIN_MODE=test
+.DEFAULT: ${PROJECT}
 
-run: env
-	go run ./main.go
+${PROJECT}: build
 
-deploy:
-	swag init
-	GOOS=linux GOARCH=amd64  go build -tags=jsoniter ./main.go
-	docker build -t registry.cn-hangzhou.aliyuncs.com/fredliang/open-platform  .
-	docker push registry.cn-hangzhou.aliyuncs.com/fredliang/open-platform
+build: dep
+	CGO_ENABLED=0 go build -o ${PROJECT}
+
+dep:
+ifneq ($(GO_MODULE_STATE), on)
+	go env -w GO111MODULE="on"
+endif
+ifeq ($(GO_PROXY), https://proxy.golang.org,direct)
+	go env -w GOPROXY="https://goproxy.cn,direct"
+endif
+	go mod tidy
+
+serve: ${PROJECT}
+	./${PROJECT} -c ./${CONFIG_FILE} 
 
 clean:
-	rm -rf *.json debug main gin-bin
+	rm -rf ${PROJECT}

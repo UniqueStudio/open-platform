@@ -18,7 +18,7 @@ WORKDIR /opt/${PROJECT_NAME}
 COPY --from=builder /app/main ./${PROJECT_NAME}
 
 RUN echo "./${PROJECT_NAME} -c settings.yaml" > run.sh &&\
-    chmod -R 755 /opt/${PROJECT_NAME}
+    chmod -R 755 /opt/${PROJECT_NAME} 
 
 EXPOSE 5000
 
