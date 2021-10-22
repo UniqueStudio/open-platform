@@ -23,13 +23,20 @@ services:
         restart: on-failure:5
         volumes:
             - /root/service-dev/open-platform/settings.yaml:/opt/open-platform/settings.yaml
-        ports:
-            - 6001:5000
+        # ports:
+        #     - 6001:5000
         networks:
             - db_network
+            - apm
         logging: *loki-logging
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.devopen.rule=Host(`dev.open.hustunique.com`)"
 
 networks:
     db_network:
         external: true
         name: database
+    apm:
+        external: true
+        name: apm

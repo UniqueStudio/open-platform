@@ -7,7 +7,6 @@ import (
 
 type Settings struct {
 	Application ApplicationConfig `mapstructure:"application"`
-	ShortLink   ShortLinkConfig   `mapstructure:"short_link"`
 	APM         APMConfig         `mapstructure:"apm"`
 	Database    DatabaseConfig    `mapstructure:"database"`
 	Email       EmailConfig       `mapstructure:"email"`
@@ -31,10 +30,6 @@ type APMConfig struct {
 	ReporterBackground string `mapstructure:"reporter_backend"`
 }
 
-type ShortLinkConfig struct {
-	URL string `mapstructure:"url"`
-}
-
 type DatabaseConfig struct {
 	Postgres struct {
 		UserDSN string `mapstructure:"user_dsn"`
@@ -48,8 +43,7 @@ type DatabaseConfig struct {
 }
 
 type TencentConfig struct {
-	SMS    SMSConfig    `mapstructure:"sms"`
-	WeWork WeWorkConfig `mapstructure:"we_work"`
+	SMS SMSConfig `mapstructure:"sms"`
 }
 
 type SMSConfig struct {
@@ -57,14 +51,6 @@ type SMSConfig struct {
 	SecretID             string `mapstructure:"secret_id"`
 	SecretKey            string `mapstructure:"secret_key"`
 	DefaultVirtualSignId uint   `mapstructure:"default_virtual_sign_id"`
-}
-
-type WeWorkConfig struct {
-	CropID        string `mapstructure:"crop_id"`
-	AgentID       int    `mapstructure:"agent_id"`
-	AgentSecret   string `mapstructure:"agent_secret"`
-	Secret        string `mapstructure:"secret"`
-	ContactSecret string `mapstructure:"contact_secret"`
 }
 
 type EmailConfig struct {
