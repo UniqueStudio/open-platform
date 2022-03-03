@@ -9,7 +9,7 @@ steps:
   - name: clone
     image: alpine/git
     commands:
-      - git clone --depth=1 -b $DRONE_COMMIT_BRANCH https://github.com.cnpmjs.org/UniqueStudio/open-platform.git .
+      - git clone --depth=1 -b $DRONE_COMMIT_BRANCH https://gitee.com/UniqueStudio/open-platform.git .
 
   - name: build_publish
     image: plugins/docker
