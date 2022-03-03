@@ -5,6 +5,7 @@ import (
 )
 
 type UniformResource struct {
+	Code    int         `json:"code"`
 	State   bool        `json:"state,omitempty"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
@@ -20,6 +21,7 @@ func ErrorResponse(err error) *UniformResource {
 
 func SuccessResponse(data interface{}) *UniformResource {
 	return &UniformResource{
+		Code:    200,
 		State:   true,
 		Message: "ok",
 		Data:    data,
