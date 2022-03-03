@@ -1,6 +1,7 @@
 version: "3.9"
 
-x-logging: &loki-logging
+x-logging:
+    &loki-logging
     driver: loki
     options:
         loki-url: http://localhost:3100/loki/api/v1/push
@@ -27,9 +28,16 @@ services:
             - 6001:5000
         networks:
             - db_network
+            - apm
         logging: *loki-logging
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.open-platform.rule=Host(`open.hustunique.com`)"
 
 networks:
     db_network:
         external: true
         name: database
+    apm:
+        external: true
+        name: apm
