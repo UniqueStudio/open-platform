@@ -3,6 +3,7 @@ package handles
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/UniqueStudio/open-platform/config"
 	"github.com/UniqueStudio/open-platform/database"
@@ -113,8 +114,19 @@ func SendSingleSMSHandler(ctx *gin.Context) {
 	if data.SignID != nil {
 		signId = *data.SignID
 	}
+
+	tid, err := strconv.ParseUint(data.TemplateID, 10, 32)
+	if err != nil {
+		span.SetStatus(codes.Error, err.Error())
+		span.RecordError(err)
+		zapx.WithContext(apmCtx).Error("parse template id to int failed", zap.Error(err))
+
+		ctx.JSON(http.StatusBadRequest, pkg.ErrorResponse(err))
+		return
+	}
+
 	resp, err := utils.SendSingleSMS(
-		apmCtx, signId, data.TemplateID,
+		apmCtx, signId, uint(tid),
 		data.PhoneNumber, data.TemplateParamSet,
 	)
 
