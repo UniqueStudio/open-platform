@@ -31,7 +31,7 @@ services:
         logging: *loki-logging
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.devopen.rule=Host(`dev.open.hustunique.com`)"
+            - "traefik.http.routers.devopen.rule=Host(`open.hustunique.com`)"
 
 networks:
     db_network:

@@ -140,7 +140,7 @@ func SendSingleSMSHandler(ctx *gin.Context) {
 	}
 
 	span.SetAttributes(attribute.Any("tencentResponse", resp))
-	zapx.WithContext(apmCtx).Info("send single sms sufficiently")
+	zapx.WithContext(apmCtx).Info("send single sms sufficiently", zap.Any("httpResp", pkg.SuccessResponse(resp)))
 	ctx.JSON(http.StatusOK, pkg.SuccessResponse(resp))
 }
 
