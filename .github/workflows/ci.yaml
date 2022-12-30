@@ -43,7 +43,7 @@ jobs:
         run: ssh-keyscan -p 22 -H ${{ secrets.SSH_IP }}  >> ~/.ssh/known_hosts
 
       - name: deploy by docker compose
-        run: docker -H ${{ secrets.SSH_DSN }} compose up --remove-orphans
+        run: docker -H ${{ secrets.SSH_DSN }} compose down && docker -H ${{ secrets.SSH_DSN }} compose up --remove-orphans
 
   Deploy-Prod:
     runs-on: ubuntu-latest
